@@ -43,4 +43,8 @@ public class Terrarium {
     @NotNull
     @PastOrPresent
     private LocalDate createDate;
+
+    @OneToMany
+    @JoinColumn(name = "TERRARIUM_ID", referencedColumnName = "ID")
+    private List<Alert> alerts = new ArrayList<>();
 }

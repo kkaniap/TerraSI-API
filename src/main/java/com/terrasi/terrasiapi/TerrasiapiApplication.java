@@ -1,5 +1,7 @@
 package com.terrasi.terrasiapi;
 
+import com.terrasi.terrasiapi.model.Alert;
+import com.terrasi.terrasiapi.model.AlertType;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

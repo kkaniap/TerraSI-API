@@ -4,10 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Data
@@ -26,7 +23,8 @@ public class News {
     @NotBlank
     private String content;
 
-    @NotEmpty
+    @NotNull
+    @Min(1)
     private Integer readTime;
 
     @NotBlank

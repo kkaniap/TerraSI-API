@@ -2,6 +2,7 @@ package com.terrasi.terrasiapi.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -33,10 +34,10 @@ public class Terrarium {
     private Boolean autoManagement;
 
     @NotNull
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private TerrariumSettings terrariumSettings;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "TERRARIUM_ID", referencedColumnName = "ID")
     private List<SensorsReads> sensorsReadsList = new ArrayList<>();
 
@@ -44,7 +45,7 @@ public class Terrarium {
     @PastOrPresent
     private LocalDate createDate;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "TERRARIUM_ID", referencedColumnName = "ID")
     private List<Alert> alerts = new ArrayList<>();
 }

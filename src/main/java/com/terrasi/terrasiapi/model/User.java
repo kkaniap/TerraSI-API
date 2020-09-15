@@ -23,11 +23,13 @@ public class User {
     private  Long id;
 
     @NotBlank
+    @Column(unique = true)
     @Size(min = 5, max = 30)
     private String username;
 
     @NotBlank
     @Size(min = 5)
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{5,}$")
     private String password;
 
     @NotBlank
@@ -45,7 +47,7 @@ public class User {
     private LocalDate birthday;
 
     @NotBlank
-    @Email
+    @Email(regexp=".+@.+\\..+")
     private String email;
 
     @NotBlank
@@ -80,6 +82,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<News> news = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Terrarium> terrariums = new ArrayList<>();
 }

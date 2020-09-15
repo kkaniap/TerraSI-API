@@ -24,7 +24,7 @@ public class AlertType {
     private String description;
 
 
-    enum Type{
+    public enum Type{
         LOW_WATER_IN_CONTAINER,
         LOW_TEMPERATURE,
         HIGH_TEMPERATURE,

@@ -1,5 +1,8 @@
 package com.terrasi.terrasiapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -79,9 +82,12 @@ public class User {
     @PastOrPresent
     private LocalDateTime accountCreated;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user")
     private List<News> news = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Terrarium> terrariums = new ArrayList<>();
+
 }

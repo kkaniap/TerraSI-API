@@ -1,8 +1,8 @@
 package com.terrasi.terrasiapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -24,6 +24,7 @@ public class Terrarium {
 
     @NotNull
     @ManyToOne
+    @JsonBackReference
     private User user;
 
     @NotBlank

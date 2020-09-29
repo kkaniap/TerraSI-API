@@ -1,5 +1,6 @@
 package com.terrasi.terrasiapi.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,6 +29,7 @@ public class Alert {
     @Enumerated(EnumType.STRING)
     private Level level;
 
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     public enum Level{
         LOW,
         MEDIUM,

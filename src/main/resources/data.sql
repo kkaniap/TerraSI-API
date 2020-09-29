@@ -75,7 +75,7 @@ INSERT INTO NEWS (ID, USER_ID, READ_TIME, CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_
  VALUES (3, 1, 10, 'Lorem ipsum', 'img/thumb/3.jpg', 'img/thumb/3_m.jpg', 'img/news/3.jpg', 'img/news/3_m.jpg',
  '2020-04-11 15:01:23');
 
-INSERT INTO ALERT_TYPE (ID, TYPE, DESCRIPTION) VALUES (1, 'LOW_WATER_LEVEL_IN_CONTAINER',
+INSERT INTO ALERT_TYPE (ID, TYPE, DESCRIPTION) VALUES (1, 'LOW_WATER_IN_CONTAINER',
  'You need to refill the water container');
 INSERT INTO ALERT_TYPE (ID, TYPE, DESCRIPTION) VALUES (2, 'LOW_TEMPERATURE',
  'You have to raise the temperature');

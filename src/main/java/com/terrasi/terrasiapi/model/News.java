@@ -1,10 +1,9 @@
 package com.terrasi.terrasiapi.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import org.springframework.hateoas.RepresentationModel;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @NoArgsConstructor
-public class News {
+public class News extends RepresentationModel<News>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

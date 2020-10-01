@@ -49,7 +49,7 @@ class NewsRepositoryTest {
         News news = prepareNews();
 
         //then
-        assertEquals(entityManager.persistAndFlush(news), newsRepository.getOne(news.getId()));
+        assertEquals(entityManager.persistAndFlush(news), newsRepository.findById(news.getId()).get());
     }
 
     @Test

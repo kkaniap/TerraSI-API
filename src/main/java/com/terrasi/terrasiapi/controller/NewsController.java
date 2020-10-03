@@ -13,13 +13,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(path = "/news", produces = { MediaType.APPLICATION_JSON_VALUE, MediaTypes.HAL_JSON_VALUE })
+@RequestMapping(path = "/news", produces = {MediaType.APPLICATION_JSON_VALUE, MediaTypes.HAL_JSON_VALUE})
 public class NewsController {
 
     private final NewsRepository newsRepository;
@@ -32,7 +33,7 @@ public class NewsController {
 
     @GetMapping
     public ResponseEntity<PagedModel<News>> getAllNews(
-            @PageableDefault(page = 0, size = 1, sort = "id", direction = Sort.Direction.DESC) Pageable page){
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable page){
         Page<News> news = newsRepository.findAll(page);
         if(news.getTotalElements() > 0){
             news.forEach(n -> n.add(linkTo(methodOn(NewsController.class).getNews(n.getId())).withSelfRel()));

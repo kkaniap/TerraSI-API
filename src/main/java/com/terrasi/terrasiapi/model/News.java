@@ -1,6 +1,8 @@
 package com.terrasi.terrasiapi.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @NoArgsConstructor
+
+
 public class News extends RepresentationModel<News>{
 
     @Id
@@ -43,5 +47,6 @@ public class News extends RepresentationModel<News>{
 
     @NotNull
     @PastOrPresent
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createDate;
 }

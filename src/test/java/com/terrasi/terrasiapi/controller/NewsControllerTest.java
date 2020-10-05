@@ -66,8 +66,25 @@ class NewsControllerTest {
     }
 
     @Test
-    void shouldGetNewsById(){
+    void shouldGetNewsById() throws Exception {
         //given
+        MvcResult result = mockMvc.perform(
+                get("news/1")
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .accept(MediaType.APPLICATION_JSON_VALUE)
+                    .accept(MediaTypes.HAL_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        Traverson traverson = new Traverson(new URI("http://localhost:" + port + linkTo(NewsController.class)
+                        .slash("1")), MediaTypes.HAL_JSON);
+
+        //when
+        News news = traverson.follow("self").toObject(News.class);
+
+        //then
+        assertEquals(1, news.getId());
     }
 }
 

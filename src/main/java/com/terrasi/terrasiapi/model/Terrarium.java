@@ -3,6 +3,7 @@ package com.terrasi.terrasiapi.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -16,7 +17,7 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
-public class Terrarium {
+public class Terrarium extends RepresentationModel<Terrarium> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

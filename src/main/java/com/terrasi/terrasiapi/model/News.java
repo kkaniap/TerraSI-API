@@ -49,4 +49,5 @@ public class News extends RepresentationModel<News>{
     @PastOrPresent
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createDate;
+
 }

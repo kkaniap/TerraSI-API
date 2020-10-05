@@ -17,7 +17,6 @@ import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,22 +68,33 @@ class NewsControllerTest {
     void shouldGetNewsById() throws Exception {
         //given
         MvcResult result = mockMvc.perform(
-                get("news/1")
+                get("/news/1")
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .accept(MediaType.APPLICATION_JSON_VALUE)
-                    .accept(MediaTypes.HAL_JSON_VALUE))
+                    .accept(MediaTypes.HAL_JSON_VALUE)
+                    .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
 
         Traverson traverson = new Traverson(new URI("http://localhost:" + port + linkTo(NewsController.class)
-                        .slash("1")), MediaTypes.HAL_JSON);
+                .slash("1")),
+                MediaTypes.HAL_JSON);
 
         //when
         News news = traverson.follow("self").toObject(News.class);
 
         //then
-        assertEquals(1, news.getId());
+        assertEquals(1L, news.getId());
+    }
+
+    @Test
+    void shouldNotGetNewsById() throws Exception {
+        MvcResult result = mockMvc.perform(
+                get("/news/100")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andReturn();
     }
 }
 

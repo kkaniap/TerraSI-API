@@ -62,17 +62,17 @@ INSERT INTO SENSORS_READS (ID, TERRARIUM_ID, TEMPERATURE, HUMIDITY, BRIGHTNESS, 
  READ_DATE)
  VALUES (8, 4, 42.5, 83, 80, 230, 450, 80, '2020-04-22 10:10:00');
 
-INSERT INTO NEWS (ID, USER_ID, READ_TIME, CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
+INSERT INTO NEWS (ID, USER_ID, TITLE, READ_TIME, CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
  CREATE_DATE)
- VALUES (1, 1, 5, 'Lorem ipsum', 'img/thumb/1.jpg', 'img/thumb/1_m.jpg', 'img/news/1.jpg', 'img/news/1_m.jpg',
+ VALUES (1, 1, 'Lorem ipsum', 5, 'Lorem ipsum', 'img/thumb/1.jpg', 'img/thumb/1_m.jpg', 'img/news/1.jpg', 'img/news/1_m.jpg',
  '2020-04-11 10:01:23');
-INSERT INTO NEWS (ID, USER_ID, READ_TIME, CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
+INSERT INTO NEWS (ID, USER_ID, TITLE, READ_TIME, CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
  CREATE_DATE)
- VALUES (2, 1, 15, 'Lorem ipsum', 'img/thumb/2.jpg', 'img/thumb/2_m.jpg', 'img/news/2.jpg', 'img/news/2_m.jpg',
+ VALUES (2, 1, 'Lorem ipsum', 15, 'Lorem ipsum', 'img/thumb/2.jpg', 'img/thumb/2_m.jpg', 'img/news/2.jpg', 'img/news/2_m.jpg',
  '2020-04-15 08:14:11');
-INSERT INTO NEWS (ID, USER_ID, READ_TIME, CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
+INSERT INTO NEWS (ID, USER_ID, TITLE, READ_TIME, CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
  CREATE_DATE)
- VALUES (3, 1, 10, 'Lorem ipsum', 'img/thumb/3.jpg', 'img/thumb/3_m.jpg', 'img/news/3.jpg', 'img/news/3_m.jpg',
+ VALUES (3, 1, 'Lorem ipsum', 10, 'Lorem ipsum', 'img/thumb/3.jpg', 'img/thumb/3_m.jpg', 'img/news/3.jpg', 'img/news/3_m.jpg',
  '2020-04-11 15:01:23');
 
 INSERT INTO ALERT_TYPE (ID, TYPE, DESCRIPTION) VALUES (1, 'LOW_WATER_IN_CONTAINER',

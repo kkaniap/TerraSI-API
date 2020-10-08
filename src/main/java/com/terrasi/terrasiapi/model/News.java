@@ -1,8 +1,6 @@
 package com.terrasi.terrasiapi.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import lombok.Data;
@@ -29,6 +27,8 @@ public class News extends RepresentationModel<News>{
     private User user;
 
     @NotBlank
+    private String shortContent;
+
     private String content;
 
     @NotBlank
@@ -55,4 +55,8 @@ public class News extends RepresentationModel<News>{
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createDate;
 
+    @JsonProperty("createUser")
+    private String jsonUserName(){
+        return user.getFirstName() + " " + user.getLastName();
+    }
 }

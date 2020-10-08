@@ -62,17 +62,25 @@ INSERT INTO SENSORS_READS (ID, TERRARIUM_ID, TEMPERATURE, HUMIDITY, BRIGHTNESS, 
  READ_DATE)
  VALUES (8, 4, 42.5, 83, 80, 230, 450, 80, '2020-04-22 10:10:00');
 
-INSERT INTO NEWS (ID, USER_ID, TITLE, READ_TIME, CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
+INSERT INTO NEWS (ID, USER_ID, TITLE, READ_TIME, SHORT_CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
  CREATE_DATE)
- VALUES (1, 1, 'Lorem ipsum', 5, 'Lorem ipsum', 'img/thumb/1.jpg', 'img/thumb/1_m.jpg', 'img/news/1.jpg', 'img/news/1_m.jpg',
+ VALUES (1, 1, 'My Bachelor thesis', 5, 'Where did the idea come from ?<br>How does it look like at my university ?<br/>And whats next ?<br><br>Answers to these questions and more are in the post', '../../../assets/homeAssets/NewsID/1/logo_1.png',
+  '../../../assets/homeAssets/NewsID/1/logo_mobile_1.png', '../../../assets/newsAssets/NewsID/1/logo_1.png', '../../../assets/homeAssets/NewsID/1/logo_mobile_1.png',
  '2020-04-11 10:01:23');
-INSERT INTO NEWS (ID, USER_ID, TITLE, READ_TIME, CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
+INSERT INTO NEWS (ID, USER_ID, TITLE, READ_TIME, SHORT_CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
  CREATE_DATE)
- VALUES (2, 1, 'Lorem ipsum', 15, 'Lorem ipsum', 'img/thumb/2.jpg', 'img/thumb/2_m.jpg', 'img/news/2.jpg', 'img/news/2_m.jpg',
+ VALUES (2, 1, 'What I am working on', 15, 'You will find details about the module plans that you can install to your terrarium and what changes I plan on the website', '../../../assets/homeAssets/NewsID/2/logo_2.png',
+  '../../../assets/homeAssets/NewsID/2/logo_mobile_2.png', '../../../assets/newsAssets/NewsID/2/logo_2.png', '../../../assets/homeAssets/NewsID/2/logo_mobile_2.png',
  '2020-04-15 08:14:11');
-INSERT INTO NEWS (ID, USER_ID, TITLE, READ_TIME, CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
+INSERT INTO NEWS (ID, USER_ID, TITLE, READ_TIME, SHORT_CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
  CREATE_DATE)
- VALUES (3, 1, 'Lorem ipsum', 10, 'Lorem ipsum', 'img/thumb/3.jpg', 'img/thumb/3_m.jpg', 'img/news/3.jpg', 'img/news/3_m.jpg',
+ VALUES (3, 1, 'How to save money with TerraSI', 1, '  Do you want to know how to save money by buying more ? You can get up to -25% discount. Just visit this post.', '../../../assets/homeAssets/NewsID/3/logo_3.png',
+  '../../../assets/homeAssets/NewsID/3/logo_mobile_3.png', '../../../assets/newsAssets/NewsID/3/logo_3.png', '../../../assets/homeAssets/NewsID/3/logo_mobile_3.png',
+ '2020-04-11 15:01:23');
+ INSERT INTO NEWS (ID, USER_ID, TITLE, READ_TIME, SHORT_CONTENT, IMG_THUMBNAIL, IMG_THUMBNAIL_MOBILE, IMG_NEWS, IMG_NEWS_MOBILE,
+ CREATE_DATE)
+ VALUES (4, 1, 'We have started working together', 5, 'We are pleased to inform you that we have started cooperation with ReptileSupply. This will contribute to better quality of our terrariums.If you want to know more about our cooperation, please visit this post.', '../../../assets/homeAssets/NewsID/4/logo_4.png',
+  '../../../assets/homeAssets/NewsID/4/logo_mobile_4.png', '../../../assets/newsAssets/NewsID/4/logo_4.png', '../../../assets/homeAssets/NewsID/4/logo_mobile_4.png',
  '2020-04-11 15:01:23');
 
 INSERT INTO ALERT_TYPE (ID, TYPE, DESCRIPTION) VALUES (1, 'LOW_WATER_IN_CONTAINER',

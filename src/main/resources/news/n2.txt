@@ -1,0 +1,55 @@
+<h2>First about the website</h2>
+What you see on your site now is sure to change - for the better.
+ In the near future, I would like the graphics and functionality of the website to be taken care
+ of by a person who deals with it professionally (and which has a better sense of aesthetics :D ).
+ For now, however, the most important thing for me is that your terrarium works as well as possible.<br/><br/>
+<h2>Basic functionalities</h2>
+Below I will introduce you to the basic functionalities of the terrarium, which I am going to introduce to the start.
+<ul>
+    <li>Tracking current measurements</li>
+    <li>Remote instrument activation</li>
+    <li>Opening / closing sensor</li>
+    <li>Automatic terrarium management</li>
+    <li>Alert system</li>
+</ul>
+There will certainly be much more functionality in the future.
+ I already have a few ideas, but for now I will focus on the above-mentioned. I think it's enough for a good start.<br/><br/>
+<h2>Something underneath</h2>
+Your safety is equally important (if not the most important). By yours I mean your data.
+ Uses the latest methods of securing the application to best protect against hacker attacks.
+ You certainly do not want your personal data to be disclosed,
+ the amount of your equipment and how much you pay for our services. We don't want that either.
+ Creating a safe application is my priority, so I think because you can sleep well.<br/><br/>
+ There are also plans to integrate with other services such as Facebook, Instagram or Google.
+ This will allow you to easily share information from our website on social media
+ as well as log in using external websites (e.g. logging in with a Google account).<br/><br/>
+<h2>Tracking current measurements</h2>
+Tracking current measurements such as temperature measurement, humidity measurement,
+ light intensity level will allow you to better understand what is happening in your terrarium.
+ In addition, thanks to the UVA and UVB sensors, you are able to determine whether your bulbs are suitable
+ for replacement or help you confirm that you have bought the wrong one.<br/><br/>
+Can you see that in your terrarium is too bright ?<br/>
+Can you see that your terrarium is too dry ?<br/><br/>
+It's not a problem ! You can remotely change the intensity of the light or turn on humidification.
+ It has never been easier, just press a button or move a slider.<br/><br/>
+<h2>Opening / closing sensor</h2>
+Have you ever left the house and forgot whether you turned off the iron or not ?<br/>
+ Maybe if you are a breeder you have set up or closed your terrarium.<br/>
+ We will help you with that too.
+ Just go to the website and check what the closing / opening icon shows.<br/><br/>
+<h2>Automatic terrarium management</h2>
+ Can you get even more help ?<br/>
+ You are tired of constantly checking measurements ?<br/><br/>
+ Our robot will help you, just turn it on. stands right next to your terrarium icon.
+ Set the values you would like to get and he will make sure to keep them
+ and if you do not know what settings would be good for your pet, we have prepared some basic environments
+ with default values. Just select an environment from the list.<br/><br/>
+<h2>Alert system</h2>
+In case of too high temperature or an empty water container, we will notify you.
+ Alerts can be seen on the home page. We will notify you also is the given value will approach the limit value.
+ Outside of our website, you will also receive an email about the alert.
+ In the future, I also plan to provide information about the problem via SMS.<br/><br/>
+<h2>Additionally</h2>
+If you have any idea how you can improve / automate the terrarium - share this idea with us.
+
+

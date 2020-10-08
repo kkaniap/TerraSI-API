@@ -2,6 +2,7 @@ package com.terrasi.terrasiapi.controller;
 
 import com.terrasi.terrasiapi.model.News;
 import com.terrasi.terrasiapi.repository.NewsRepository;
+import com.terrasi.terrasiapi.service.NewsService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,16 +25,18 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class NewsController {
 
     private final NewsRepository newsRepository;
+    private final NewsService newsService;
     private final PagedResourcesAssembler<News> pagedResourcesAssembler;
 
-    public NewsController(NewsRepository newsRepository, PagedResourcesAssembler<News> pagedResourcesAssembler) {
+    public NewsController(NewsRepository newsRepository, NewsService newsService, PagedResourcesAssembler<News> pagedResourcesAssembler) {
         this.newsRepository = newsRepository;
+        this.newsService = newsService;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
     @GetMapping
     public ResponseEntity<PagedModel<News>> getAllNews(
-            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable page){
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable page){
         Page<News> news = newsRepository.findAll(page);
         if(news.getTotalElements() > 0){
             news.forEach(n -> n.add(linkTo(methodOn(NewsController.class).getNews(n.getId())).withSelfRel()));
@@ -44,9 +47,10 @@ public class NewsController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<News> getNews(@PathVariable Long id){
+    public ResponseEntity<News> getNews(@PathVariable Long id) {
         Optional<News> news = newsRepository.findById(id);
         if(news.isPresent()){
+            news.get().setContent(newsService.readNews(id));
             news.get().add(linkTo(methodOn(NewsController.class).getNews(id)).withSelfRel());
             return new ResponseEntity<News>(news.get(), HttpStatus.OK);
         }

@@ -33,7 +33,7 @@ class NewsRepositoryTest {
 
         News news = new News();
         news.setUser(user);
-        news.setContent("test news");
+        news.setShortContent("test news");
         news.setReadTime(5);
         news.setImgNews("img/news/");
         news.setImgNewsMobile("img/news/mobile");

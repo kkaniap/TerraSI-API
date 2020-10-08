@@ -33,6 +33,7 @@ public class User {
 
     @NotBlank
     @Size(min = 5)
+    @JsonIgnore
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{5,}$")
     private String password;
 

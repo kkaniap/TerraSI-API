@@ -1,0 +1,24 @@
+<h2>Hello !</h2>
+I'm Patryk Kania and i am 24 years old programmer from Tychy from Poland.
+ For now i'm working as a Junior Java/Salesforce Developer in Accenture.
+ I also study at the University of Economics in Katowice.
+ Apart from programming, my second hobby is American football.
+ I am currently playing for the team Tychy Falcons, which is in the highest league in Poland.<br/><br/>
+<h2>And here it is - My Bachelor thesis</h2>
+In Poland, in the last year of studies, we write a bachelor's thesis, which in the case of
+ IT is a larger programming project (most often).
+ I came up with the idea for a smart terrarium when I met a my friend Adrian.
+ He is a breeder of wild animals such as agams, snakes and spiders.<br/>
+At one point he asked me "Can you automate my terrariums?". <b>And here it is - My Bachelor thesis</b><br/><br/>
+<h2>My university</h2>
+I have a year to do a project and describe it. But unfortunately that's not all.
+ In addition to the project, we need to know the answer to 100 questions that have been previously prepared.
+ The questions cover not only programming but also math, algorithms and data structure, databases and networks.
+ All work is supervised by the promoter and depending on him, further requirements for my project are set.<br/><br/>
+<h2>What's next</h2>
+I plan to establish cooperation with a company that professionally deals with the creation and equipment of terrariums.
+ All this to ensure the highest quality of our products and to ensure the best price conditions.<br/>
+ You will find out everything about the functionality of the terrarium in the post that will appear soon.
+
+
+

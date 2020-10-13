@@ -32,7 +32,7 @@ public class LoginController {
                     .setSubject(loggedUser.getUsername())
                     .claim("roles", loggedUser.getRoles().stream().map(UserRole::getRole).toArray())
                     .setIssuedAt(new Date(time))
-                    .setExpiration(new Date(time + 1000*60*60))
+                    .setExpiration(new Date(time + 1000*60*30))
                     .signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
                     .compact();
         }

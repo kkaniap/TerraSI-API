@@ -1,6 +1,8 @@
 package com.terrasi.terrasiapi.security;
 
 import io.jsonwebtoken.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,38 +10,55 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.nio.file.AccessDeniedException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class JwtFilter extends BasicAuthenticationFilter{
 
-    private final String secretKey = "6eFj-#O>Ir[%Z7@@~yK*mq7*|={IHp";
-    public JwtFilter(AuthenticationManager authenticationManager) {
+    private final String secretKey;
+    private final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
+
+    public JwtFilter(AuthenticationManager authenticationManager,String secretKey) {
         super(authenticationManager);
+        this.secretKey = secretKey;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String header = request.getHeader("Authorization");
-        if(header != null && !request.getRequestURI().equals("/login")) {
-            try {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, AccessDeniedException {
+
+        try {
+            String header = request.getHeader("Authorization");
+            if(header != null && !request.getRequestURI().equals("/login")) {
                 UsernamePasswordAuthenticationToken authResult = getAuthenticationByToken(header);
                 SecurityContextHolder.getContext().setAuthentication(authResult);
-            }catch (ExpiredJwtException ex){
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Toke expired");
-            }catch (SignatureException ex){
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Enter a valid token");
             }
+        }catch (SignatureException e){
+            response.setContentType(request.getRemoteAddr() + " " + e.getMessage());
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Enter valid token");
+        }catch (ExpiredJwtException e){
+            response.setContentType(request.getRemoteAddr() + " " + e.getMessage());
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Token expired");
+        }catch (Exception e){
+            response.setContentType(request.getRemoteAddr() + " " + e.getMessage());
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
         }
-        chain.doFilter(request, response);
+
+        try{
+            chain.doFilter(request, response);
+        }catch(Exception e){
+            logger.error(response.getContentType());
+        }
     }
 
     @SuppressWarnings("unchecked")
-    private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header) throws SignatureException, ExpiredJwtException{
+    private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header){
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey.getBytes())
                     .parseClaimsJws(header.replace("Bearer ",""));
 

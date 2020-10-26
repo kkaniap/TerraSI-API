@@ -1,6 +1,9 @@
 package com.terrasi.terrasiapi.security;
 
-import io.jsonwebtoken.*;
+import com.terrasi.terrasiapi.Utils.JwtUtils;
+import com.terrasi.terrasiapi.model.JwtModel;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,25 +16,21 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
-public class JwtFilter extends BasicAuthenticationFilter{
+public class  JwtFilter extends BasicAuthenticationFilter{
 
-    private final String secretKey;
     private final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
 
-    public JwtFilter(AuthenticationManager authenticationManager,String secretKey) {
+    public JwtFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
-        this.secretKey = secretKey;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, AccessDeniedException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
 
         try {
             String header = request.getHeader("Authorization");
@@ -53,26 +52,15 @@ public class JwtFilter extends BasicAuthenticationFilter{
         try{
             chain.doFilter(request, response);
         }catch(Exception e){
-            logger.error(response.getContentType());
+            logger.info(response.getContentType());
         }
     }
 
-    @SuppressWarnings("unchecked")
     private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header){
-            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey.getBytes())
-                    .parseClaimsJws(header.replace("Bearer ",""));
-
-            if(claimsJws.getBody().containsKey("sub") && claimsJws.getBody().containsKey("roles")){
-                String username = claimsJws.getBody().get("sub").toString();
-                List<String> roles = (List<String>)claimsJws.getBody().get("roles");
-
-                Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-                roles.forEach(s -> authorities.add(new SimpleGrantedAuthority(s)));
-                Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Collections.unmodifiableSet(authorities);
-
-                return new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
-            }else{
-                throw new SignatureException("");
-            }
+        JwtModel model = JwtUtils.parseJWT(header);
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        model.getRoles().forEach(s -> authorities.add(new SimpleGrantedAuthority(s)));
+        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Collections.unmodifiableSet(authorities);
+        return new UsernamePasswordAuthenticationToken(model.getUsername(), null, simpleGrantedAuthorities);
     }
 }

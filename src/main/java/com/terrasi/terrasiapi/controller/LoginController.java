@@ -1,41 +1,55 @@
 package com.terrasi.terrasiapi.controller;
 
+import com.terrasi.terrasiapi.Utils.JwtUtils;
+import com.terrasi.terrasiapi.model.JwtModel;
 import com.terrasi.terrasiapi.model.User;
-import com.terrasi.terrasiapi.model.UserRole;
 import com.terrasi.terrasiapi.service.LoginService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/login")
+@RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 public class LoginController {
 
     private final LoginService loginService;
-    private final String secretKey;
 
-    public LoginController(LoginService loginService,@Value("${secret.key}") String secretKey) {
+    public LoginController(LoginService loginService) {
         this.loginService = loginService;
-        this.secretKey = secretKey;
     }
 
-    @PostMapping
-    public String login(@RequestBody User user){
-        User loggedUser = loginService.loginUser(user.getUsername(), user.getPassword());
-        if(loggedUser != null){
-            long time = System.currentTimeMillis();
-            return Jwts.builder()
-                    .setSubject(loggedUser.getUsername())
-                    .claim("roles", loggedUser.getRoles().stream().map(UserRole::getRole).toArray())
-                    .setIssuedAt(new Date(time))
-                    .setExpiration(new Date(time + 1000*60*30))
-                    .signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
-                    .compact();
+    @PostMapping("/login")
+    public ResponseEntity<Map<String,String>> login(@RequestBody User user){
+        Optional<User> loggedUser = loginService.loginUser(user.getUsername(), user.getPassword());
+        if(loggedUser.isPresent()){
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("accessToken", loginService.generateAccessToken(loggedUser.get()));
+            tokens.put("refreshToken", loginService.generateRefreshToken(loggedUser.get()));
+            return new ResponseEntity<>(tokens, HttpStatus.OK);
         }
-        return null;
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @PostMapping("/refreshToken")
+    public ResponseEntity<String> refreshToken(@RequestBody String refreshToken){
+        JwtModel jwtModel;
+        try{
+            jwtModel = JwtUtils.parseJWT(refreshToken);
+        }catch (SignatureException ex){
+            return new ResponseEntity<>("Jwt token not valid",HttpStatus.UNAUTHORIZED);
+        }catch (ExpiredJwtException ex){
+            return new ResponseEntity<>("Jwt token is expired",HttpStatus.UNAUTHORIZED);
+        }
+        Optional<String> newToken = loginService.newAccessToken(jwtModel.getUsername());
+        return newToken.map(s -> new ResponseEntity<>(s, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>("Bad credentials", HttpStatus.UNAUTHORIZED));
     }
 }

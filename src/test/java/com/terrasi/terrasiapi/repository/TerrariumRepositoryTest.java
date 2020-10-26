@@ -1,6 +1,9 @@
 package com.terrasi.terrasiapi.repository;
 
-import com.terrasi.terrasiapi.model.*;
+import com.terrasi.terrasiapi.model.Alert;
+import com.terrasi.terrasiapi.model.SensorsReads;
+import com.terrasi.terrasiapi.model.Terrarium;
+import com.terrasi.terrasiapi.model.TerrariumSettings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)

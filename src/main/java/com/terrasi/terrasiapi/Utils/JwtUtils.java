@@ -21,9 +21,10 @@ public class JwtUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static JwtModel parseJWT(String token){
+    public static JwtModel parseAccessToken(String token){
         Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(token.replace("Bearer ", ""));
+
         JwtModel jwtModel;
 
         if (claimsJws.getBody().containsKey("sub") && claimsJws.getBody().containsKey("roles")
@@ -35,6 +36,18 @@ public class JwtUtils {
             throw new SignatureException("Jwt token not valid");
         }
         return jwtModel;
+    }
+
+    public static String parseRefreshToken(String token){
+        Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(token);
+
+        if (claimsJws.getBody().containsKey("sub") && (boolean) claimsJws.getBody().get("refresh")
+                && claimsJws.getBody().containsKey("iat") && claimsJws.getBody().containsKey("exp")){
+            return claimsJws.getBody().getSubject();
+        }else {
+            throw new SignatureException("Jwt token not valid");
+        }
     }
 }
 

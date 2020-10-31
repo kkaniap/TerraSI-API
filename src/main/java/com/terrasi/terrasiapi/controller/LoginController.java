@@ -5,7 +5,9 @@ import com.terrasi.terrasiapi.model.JwtModel;
 import com.terrasi.terrasiapi.model.User;
 import com.terrasi.terrasiapi.service.LoginService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
+import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,17 +41,17 @@ public class LoginController {
     }
 
     @PostMapping("/refreshToken")
-    public ResponseEntity<String> refreshToken(@RequestBody String refreshToken){
-        JwtModel jwtModel;
+    public ResponseEntity<Object> refreshToken(@RequestBody Map<String, String> mapToken){
+        String username;
         try{
-            jwtModel = JwtUtils.parseJWT(refreshToken);
-        }catch (SignatureException ex){
+            username = JwtUtils.parseRefreshToken(mapToken.get("refreshToken"));
+        }catch (SignatureException | MalformedJwtException e){
             return new ResponseEntity<>("Jwt token not valid",HttpStatus.UNAUTHORIZED);
         }catch (ExpiredJwtException ex){
             return new ResponseEntity<>("Jwt token is expired",HttpStatus.UNAUTHORIZED);
         }
-        Optional<String> newToken = loginService.newAccessToken(jwtModel.getUsername());
-        return newToken.map(s -> new ResponseEntity<>(s, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>("Bad credentials", HttpStatus.UNAUTHORIZED));
+        Optional<String> newToken = loginService.newAccessToken(username);
+        return newToken.<ResponseEntity<Object>>map(s -> new ResponseEntity<>(Map.of("accessToken", s), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED));
     }
 }

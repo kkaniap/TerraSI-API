@@ -32,7 +32,7 @@ public class LoginService {
                 .setSubject(user.getUsername())
                 .claim("roles", user.getRoles().stream().map(UserRole::getRole).toArray())
                 .setIssuedAt(new Date(time))
-                .setExpiration(new Date(time + 1000*60*10))
+                .setExpiration(new Date(time + 1000*15))
                 .signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
                 .compact();
     }
@@ -41,7 +41,7 @@ public class LoginService {
         long time = System.currentTimeMillis();
         return Jwts.builder()
                 .setSubject(user.getUsername())
-                .claim("roles", user.getRoles().stream().map(UserRole::getRole).toArray())
+                .claim("refresh", true)
                 .setIssuedAt(new Date(time))
                 .setExpiration(new Date(time + 1000*60*60*24*7))
                 .signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
@@ -50,7 +50,7 @@ public class LoginService {
 
     public Optional<String> newAccessToken(String username){
         Optional<User> user = userRepository.findByUsername(username);
-        Optional<String> newToken = null;
+        Optional<String> newToken = Optional.empty();
         if(user.isPresent()){
             newToken = Optional.of(generateAccessToken(user.get()));
         }

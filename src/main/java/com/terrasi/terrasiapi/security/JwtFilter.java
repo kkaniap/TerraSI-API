@@ -34,30 +34,30 @@ public class  JwtFilter extends BasicAuthenticationFilter{
 
         try {
             String header = request.getHeader("Authorization");
-            if(header != null && !request.getRequestURI().equals("/login")) {
+            if(header != null && (!request.getRequestURI().equals("/login") && !request.getRequestURI().equals("/refreshToken"))) {
                 UsernamePasswordAuthenticationToken authResult = getAuthenticationByToken(header);
                 SecurityContextHolder.getContext().setAuthentication(authResult);
             }
         }catch (SignatureException e){
             response.setContentType(request.getRemoteAddr() + " " + e.getMessage());
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Enter valid token");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Enter valid token");
         }catch (ExpiredJwtException e){
             response.setContentType(request.getRemoteAddr() + " " + e.getMessage());
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Token expired");
-        }catch (Exception e){
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+        }catch(Exception e) {
             response.setContentType(request.getRemoteAddr() + " " + e.getMessage());
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
         }
 
         try{
             chain.doFilter(request, response);
-        }catch(Exception e){
+        }catch(Exception ex){
             logger.info(response.getContentType());
         }
     }
 
     private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header){
-        JwtModel model = JwtUtils.parseJWT(header);
+        JwtModel model = JwtUtils.parseAccessToken(header);
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         model.getRoles().forEach(s -> authorities.add(new SimpleGrantedAuthority(s)));
         Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Collections.unmodifiableSet(authorities);

@@ -48,7 +48,7 @@ public class NewsController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<News> getNews(@PathVariable Long id) {
+    public ResponseEntity<News> getNews(@PathVariable Long id){
         Optional<News> news = newsRepository.findById(id);
         if(news.isPresent()){
             news.get().setContent(newsService.readNews(id));

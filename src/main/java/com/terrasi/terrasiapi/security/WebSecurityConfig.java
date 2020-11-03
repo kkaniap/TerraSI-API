@@ -14,6 +14,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/news/**").authenticated()
+                .antMatchers(HttpMethod.GET,"/terrariums/**").authenticated()
                 .antMatchers(HttpMethod.POST,"/login").permitAll()
                 .antMatchers(HttpMethod.POST,"/refreshToken").permitAll()
                 .anyRequest().authenticated()

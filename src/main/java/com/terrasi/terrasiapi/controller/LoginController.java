@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -29,7 +30,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String,String>> login(@RequestBody User user){
+    public ResponseEntity<Map<String,String>> login(@RequestBody User user) throws InterruptedException {
         Optional<User> loggedUser = loginService.loginUser(user.getUsername(), user.getPassword());
         if(loggedUser.isPresent()){
             Map<String, String> tokens = new HashMap<>();

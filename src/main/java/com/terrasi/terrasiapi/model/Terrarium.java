@@ -1,6 +1,9 @@
 package com.terrasi.terrasiapi.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
@@ -45,6 +48,7 @@ public class Terrarium extends RepresentationModel<Terrarium> {
 
     @NotNull
     @PastOrPresent
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate createDate;
 
     @OneToMany(cascade = CascadeType.ALL)

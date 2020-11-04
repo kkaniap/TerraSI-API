@@ -1,5 +1,8 @@
 package com.terrasi.terrasiapi.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -32,9 +35,11 @@ public class TerrariumSettings {
     private Integer humidityLevel;
 
     @NotNull
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
     private LocalTime sunriseTime;
 
     @NotNull
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
     private LocalTime sunsetTime;
 
     @Min(0)

@@ -45,7 +45,7 @@ public class TerrariumController {
 
     @GetMapping
     public ResponseEntity<PagedModel<Terrarium>> getAllTerrariumsByUser(
-            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable page,
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable page,
             @RequestHeader("Authorization") String accessToken){
 
         Page<Terrarium> terrariums = terrariumService.getTerrariumsByToken(accessToken, page);
@@ -60,17 +60,17 @@ public class TerrariumController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Terrarium> getTerrariumById(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
+    public ResponseEntity<Object> getTerrariumById(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
         Terrarium terrarium;
         try{
             terrarium = terrariumService.getTerrariumById(id, accessToken);
         }catch (UnauthorizedException e){
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("ddddd", HttpStatus.UNAUTHORIZED);
         } catch (NotFoundException e){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
             terrarium.add(linkTo(methodOn(TerrariumController.class).getTerrariumById(id,"")).withSelfRel());
-            return new ResponseEntity<Terrarium>(terrarium, HttpStatus.OK);
+            return new ResponseEntity<>(terrarium, HttpStatus.OK);
     }
 }
 

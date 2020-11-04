@@ -1,5 +1,7 @@
 package com.terrasi.terrasiapi.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -46,5 +48,6 @@ public class SensorsReads {
 
     @NotNull
     @PastOrPresent
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime readDate;
 }

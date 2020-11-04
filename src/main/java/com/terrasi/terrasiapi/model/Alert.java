@@ -1,6 +1,8 @@
 package com.terrasi.terrasiapi.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +22,7 @@ public class Alert {
 
     @NotNull
     @PastOrPresent
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createDate;
 
     @OneToOne
@@ -29,7 +32,7 @@ public class Alert {
     @Enumerated(EnumType.STRING)
     private Level level;
 
-    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public enum Level{
         LOW,
         MEDIUM,

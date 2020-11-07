@@ -42,7 +42,7 @@ public class  JwtFilter extends BasicAuthenticationFilter{
             response.setContentType(request.getRemoteAddr() + " " + e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Enter valid token");
         }catch (ExpiredJwtException e){
-            response.setContentType(request.getRemoteAddr() + " " + e.getMessage());
+            response.setContentType(request.getRemoteAddr() + "sss" + e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
         }catch(Exception e) {
             response.setContentType(request.getRemoteAddr() + "" + e.getMessage());

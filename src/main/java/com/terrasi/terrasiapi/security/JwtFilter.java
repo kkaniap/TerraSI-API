@@ -43,10 +43,10 @@ public class  JwtFilter extends BasicAuthenticationFilter{
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Enter valid token");
         }catch (ExpiredJwtException e){
             response.setContentType(request.getRemoteAddr() + " " + e.getMessage());
-            response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Token expired");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
         }catch(Exception e) {
             response.setContentType(request.getRemoteAddr() + "" + e.getMessage());
-            response.sendError(HttpServletResponse.SC_CONFLICT, e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
         }
 
         try{

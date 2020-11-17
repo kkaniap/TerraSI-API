@@ -1,10 +1,12 @@
 package com.terrasi.terrasiapi.controller;
 
 import com.terrasi.terrasiapi.Utils.JwtUtils;
+import com.terrasi.terrasiapi.exception.ForbiddenException;
 import com.terrasi.terrasiapi.exception.NotFoundException;
 import com.terrasi.terrasiapi.exception.UnauthorizedException;
 import com.terrasi.terrasiapi.model.JwtModel;
 import com.terrasi.terrasiapi.model.Terrarium;
+import com.terrasi.terrasiapi.model.TerrariumSettings;
 import com.terrasi.terrasiapi.model.User;
 import com.terrasi.terrasiapi.repository.TerrariumRepository;
 import com.terrasi.terrasiapi.repository.UserRepository;
@@ -21,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -65,12 +68,30 @@ public class TerrariumController {
         try{
             terrarium = terrariumService.getTerrariumById(id, accessToken);
         }catch (UnauthorizedException e){
-            return new ResponseEntity<>("ddddd", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
         } catch (NotFoundException e){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User or terrarium not found", HttpStatus.NOT_FOUND);
+        }catch (ForbiddenException e){
+            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
         }
-            terrarium.add(linkTo(methodOn(TerrariumController.class).getTerrariumById(id,"")).withSelfRel());
-            return new ResponseEntity<>(terrarium, HttpStatus.OK);
+        terrarium.add(linkTo(methodOn(TerrariumController.class).getTerrariumById(id,"")).withSelfRel());
+        return new ResponseEntity<>(terrarium, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/settings")
+    public ResponseEntity<String> saveTerrariumSettings(@PathVariable Long id, @RequestBody TerrariumSettings settings,
+                                                        @RequestHeader("Authorization") String accessToken){
+        try{
+            terrariumService.saveTerrariumSettings(id, accessToken, settings);
+        }catch (UnauthorizedException e){
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }catch (NotFoundException e){
+            return new ResponseEntity<>("User or terrarium not found", HttpStatus.NOT_FOUND);
+        }catch (ForbiddenException e){
+            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
+        }
+        System.out.println(settings);
+        return new ResponseEntity<>("Settings updated", HttpStatus.OK);
     }
 }
 

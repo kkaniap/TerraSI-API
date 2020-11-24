@@ -32,6 +32,7 @@ class NewsRepositoryTest {
         User user = userRepository.getOne(1L);
 
         News news = new News();
+        news.setTitle("test");
         news.setUser(user);
         news.setShortContent("test news");
         news.setReadTime(5);
@@ -45,6 +46,7 @@ class NewsRepositoryTest {
 
     @Test
     public void should_save_news(){
+
         //given
         News news = prepareNews();
 

@@ -70,7 +70,7 @@ public class TerrariumController {
         }catch (UnauthorizedException e){
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
         } catch (NotFoundException e){
-            return new ResponseEntity<>("User or terrarium not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
         }catch (ForbiddenException e){
             return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
         }

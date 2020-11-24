@@ -1,5 +1,6 @@
 package com.terrasi.terrasiapi.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserRole {
 
     @Id

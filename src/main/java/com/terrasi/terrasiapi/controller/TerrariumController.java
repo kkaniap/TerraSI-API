@@ -36,12 +36,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping(path = "/terrariums", produces = {MediaType.APPLICATION_JSON_VALUE, MediaTypes.HAL_JSON_VALUE})
 public class TerrariumController {
 
-    private final TerrariumRepository terrariumRepository;
     private final TerrariumService terrariumService;
     private final PagedResourcesAssembler<Terrarium> pagedResourcesAssembler;
 
-    public TerrariumController(TerrariumRepository terrariumRepository,TerrariumService terrariumService, PagedResourcesAssembler<Terrarium> pagedResourcesAssembler) {
-        this.terrariumRepository = terrariumRepository;
+    public TerrariumController(TerrariumService terrariumService, PagedResourcesAssembler<Terrarium> pagedResourcesAssembler) {
         this.terrariumService = terrariumService;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
@@ -90,7 +88,6 @@ public class TerrariumController {
         }catch (ForbiddenException e){
             return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
         }
-        System.out.println(settings);
         return new ResponseEntity<>("Settings updated", HttpStatus.OK);
     }
 }

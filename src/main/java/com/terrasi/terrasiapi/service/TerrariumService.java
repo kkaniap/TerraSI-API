@@ -56,7 +56,7 @@ public class TerrariumService {
         throw new UnauthorizedException();
     }
 
-    public void saveTerrariumSettings(Long id, String accessToken, TerrariumSettings settings) throws UnauthorizedException, NotFoundException, ForbiddenException {
+    public boolean saveTerrariumSettings(Long id, String accessToken, TerrariumSettings settings) throws UnauthorizedException, NotFoundException, ForbiddenException {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
@@ -64,7 +64,7 @@ public class TerrariumService {
             if(terrarium.isPresent()){
                 if(terrarium.get().getUser().getId().equals(user.get().getId())){
                     terrariumSettingsRepository.save(settings);
-                    return;
+                    return true;
                 }else {
                     throw new ForbiddenException();
                 }

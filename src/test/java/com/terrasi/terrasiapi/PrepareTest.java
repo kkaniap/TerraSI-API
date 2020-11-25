@@ -1,8 +1,6 @@
 package com.terrasi.terrasiapi;
 
-import com.terrasi.terrasiapi.model.News;
-import com.terrasi.terrasiapi.model.User;
-import com.terrasi.terrasiapi.model.UserRole;
+import com.terrasi.terrasiapi.model.*;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.data.domain.Page;
@@ -10,12 +8,17 @@ import org.springframework.data.domain.PageImpl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 public final class PrepareTest {
 
     private static User user;
+    private static TerrariumSettings terrariumSettings;
     private static List<News> news;
+    private static List<Alert> alerts;
+    private static List<Terrarium> terrariums;
+    private static List<SensorsReads> sensorsReads;
 
     public static User getUser(){
         if(user == null){
@@ -36,6 +39,46 @@ public final class PrepareTest {
                     "test", "test", "test", LocalDateTime.now()));
         }
         return new PageImpl<>(news);
+    }
+
+    public static Page<Terrarium> getTerrariums(){
+        if(terrariums == null){
+            terrariums = new ArrayList<>();
+            terrariums.add(new Terrarium(1L, getUser(), "test", true, getTerrariumSettings(), getSensorsReads(),
+                    LocalDate.now(), getAlerts()));
+            terrariums.add(new Terrarium(2L, getUser(), "test", true, getTerrariumSettings(), getSensorsReads(),
+                    LocalDate.now(), getAlerts()));
+        }
+        return new PageImpl<>(terrariums);
+    }
+
+    public static TerrariumSettings getTerrariumSettings(){
+        if(terrariumSettings == null){
+            terrariumSettings = new TerrariumSettings(1L, 50, 50, LocalTime.now(),
+                    LocalTime.now(), 50);
+        }
+        return terrariumSettings;
+    }
+
+    public static List<SensorsReads> getSensorsReads(){
+        if(sensorsReads == null){
+            sensorsReads = new ArrayList<>();
+            sensorsReads.add(new SensorsReads(1L, 60.5, 50, 50, 50, 50,
+                    50, LocalDateTime.now()));
+            sensorsReads.add(new SensorsReads(2L, 60.5, 50, 50, 50, 50,
+                    50, LocalDateTime.now()));
+        }
+        return sensorsReads;
+    }
+
+    public static List<Alert> getAlerts(){
+        if(alerts == null){
+            alerts = new ArrayList<>();
+            AlertType alertType = new AlertType(1L, AlertType.Type.HIGH_TEMPERATURE, "test");
+            alerts.add(new Alert(1L, LocalDateTime.now(), alertType, Alert.Level.HIGH));
+            alerts.add(new Alert(2L, LocalDateTime.now(), alertType, Alert.Level.HIGH));
+        }
+        return alerts;
     }
 
     public static String getUserAccessToken(){

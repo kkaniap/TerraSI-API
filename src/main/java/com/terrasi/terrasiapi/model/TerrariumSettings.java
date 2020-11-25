@@ -3,6 +3,7 @@ package com.terrasi.terrasiapi.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +19,7 @@ import java.time.LocalTime;
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class TerrariumSettings {
 
     @Id

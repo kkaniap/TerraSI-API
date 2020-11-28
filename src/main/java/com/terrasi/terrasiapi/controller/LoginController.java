@@ -1,13 +1,11 @@
 package com.terrasi.terrasiapi.controller;
 
 import com.terrasi.terrasiapi.Utils.JwtUtils;
-import com.terrasi.terrasiapi.model.JwtModel;
 import com.terrasi.terrasiapi.model.User;
 import com.terrasi.terrasiapi.service.LoginService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
-import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -38,7 +35,7 @@ public class LoginController {
             tokens.put("refreshToken", loginService.generateRefreshToken(loggedUser.get()));
             return new ResponseEntity<>(tokens, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @PostMapping("/refreshToken")

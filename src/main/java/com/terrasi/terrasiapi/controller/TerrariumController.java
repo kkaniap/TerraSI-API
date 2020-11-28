@@ -1,15 +1,10 @@
 package com.terrasi.terrasiapi.controller;
 
-import com.terrasi.terrasiapi.Utils.JwtUtils;
 import com.terrasi.terrasiapi.exception.ForbiddenException;
 import com.terrasi.terrasiapi.exception.NotFoundException;
 import com.terrasi.terrasiapi.exception.UnauthorizedException;
-import com.terrasi.terrasiapi.model.JwtModel;
 import com.terrasi.terrasiapi.model.Terrarium;
 import com.terrasi.terrasiapi.model.TerrariumSettings;
-import com.terrasi.terrasiapi.model.User;
-import com.terrasi.terrasiapi.repository.TerrariumRepository;
-import com.terrasi.terrasiapi.repository.UserRepository;
 import com.terrasi.terrasiapi.service.TerrariumService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,10 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;

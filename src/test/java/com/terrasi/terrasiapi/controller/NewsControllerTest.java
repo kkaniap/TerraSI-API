@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class NewsControllerTest {
 
     @LocalServerPort
-    int port;
+    private int port;
 
     @Autowired
     private MockMvc mockMvc;

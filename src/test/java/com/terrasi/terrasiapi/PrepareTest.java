@@ -13,6 +13,8 @@ import java.util.*;
 
 public final class PrepareTest {
 
+    public static final String SECRET_KEY = "testSecretKey";
+
     private static User user;
     private static TerrariumSettings terrariumSettings;
     private static List<News> news;
@@ -91,8 +93,22 @@ public final class PrepareTest {
                 .claim("roles", user.getRoles().stream().map(UserRole::getRole).toArray())
                 .setIssuedAt(new Date(time))
                 .setExpiration(new Date(time + 1000*60*2))
-                .signWith(SignatureAlgorithm.HS512, "testSecretKey".getBytes())
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes())
                 .compact();
         return "Bearer " + token;
+    }
+
+    public static String getUserRefreshToken(){
+        if(user == null){
+            getUser();
+        }
+        long time = System.currentTimeMillis();
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .claim("refresh", true)
+                .setIssuedAt(new Date(time))
+                .setExpiration(new Date(time + 1000*60*60*24*7))
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes())
+                .compact();
     }
 }

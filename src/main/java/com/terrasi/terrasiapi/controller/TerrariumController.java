@@ -75,11 +75,24 @@ public class TerrariumController {
         }catch (UnauthorizedException e){
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
         }catch (NotFoundException e){
-            return new ResponseEntity<>("User or terrarium not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
         }catch (ForbiddenException e){
             return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>("Settings updated", HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/name")
+    public ResponseEntity<String> updateTerrariumName(@PathVariable Long id, @RequestBody String name,
+                                    @RequestHeader("Authorization") String accessToken){
+        try{
+            terrariumService.updateTerrariumName(id, name, accessToken);
+        }catch (UnauthorizedException e){
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }catch (NotFoundException e){
+            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Name updated", HttpStatus.OK);
     }
 }
 

@@ -73,4 +73,24 @@ public class TerrariumService {
         }
         throw new UnauthorizedException();
     }
+
+    public boolean updateTerrariumName(Long id, String name, String accessToken) throws UnauthorizedException, NotFoundException {
+        JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
+        Optional<Terrarium> terrarium = terrariumRepository.findById(id);
+        Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
+        if(user.isPresent()){
+            if(terrarium.isPresent()){
+                if(terrarium.get().getUser().getId().equals(user.get().getId())){
+                    terrarium.get().setName(name);
+                    terrariumRepository.save(terrarium.get());
+                    return true;
+                }else {
+                    throw new UnauthorizedException();
+                }
+            }else {
+                throw new NotFoundException();
+            }
+        }
+        throw new UnauthorizedException();
+    }
 }

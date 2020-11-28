@@ -35,8 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -236,7 +235,6 @@ public class TerrariumControllerTest {
     void shouldSaveTerrariumSettings() throws Exception {
         //given
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String token = PrepareTest.getUserAccessToken();
         ReflectionTestUtils.setField(JwtUtils.class, "secretKey", "testSecretKey");
         TerrariumSettings settings = PrepareTest.getTerrariumSettings();
@@ -324,6 +322,69 @@ public class TerrariumControllerTest {
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(settings)))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andReturn();
+    }
+
+    @Test
+    void shouldUpdateTerrariumName() throws Exception {
+        //given
+        ObjectMapper objectMapper = new ObjectMapper();
+        String token = PrepareTest.getUserAccessToken();
+        ReflectionTestUtils.setField(JwtUtils.class, "secretKey", "testSecretKey");
+        given(terrariumService.updateTerrariumName(any(Long.class), any(String.class), any(String.class))).willReturn(true);
+
+        //then
+        MvcResult result = mockMvc.perform(
+                patch("/terrariums/1/name")
+                        .header("Authorization",token)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .content("newName"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+    }
+
+    @Test
+    void shouldThrow401UpdateTerrariumName() throws Exception {
+        //given
+        ObjectMapper objectMapper = new ObjectMapper();
+        String token = PrepareTest.getUserAccessToken();
+        ReflectionTestUtils.setField(JwtUtils.class, "secretKey", "testSecretKey");
+        given(terrariumService.updateTerrariumName(any(Long.class), any(String.class), any(String.class))).willThrow(UnauthorizedException.class);
+
+        //then
+        MvcResult result = mockMvc.perform(
+                patch("/terrariums/1/name")
+                        .header("Authorization",token)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .content("newName"))
+                .andExpect(status().isUnauthorized())
+                .andDo(print())
+                .andReturn();
+    }
+
+    @Test
+    void shouldThrow404UpdateTerrariumName() throws Exception {
+        //given
+        ObjectMapper objectMapper = new ObjectMapper();
+        String token = PrepareTest.getUserAccessToken();
+        ReflectionTestUtils.setField(JwtUtils.class, "secretKey", "testSecretKey");
+        given(terrariumService.updateTerrariumName(any(Long.class), any(String.class), any(String.class))).willThrow(NotFoundException.class);
+
+        //then
+        MvcResult result = mockMvc.perform(
+                patch("/terrariums/1/name")
+                        .header("Authorization",token)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .content("newName"))
                 .andExpect(status().isNotFound())
                 .andDo(print())
                 .andReturn();

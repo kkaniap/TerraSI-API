@@ -99,9 +99,16 @@ public class TerrariumController {
         return new ResponseEntity<>("Name updated", HttpStatus.OK);
     }
 
-    @PostMapping("/{id}/bulb")
-    public ResponseEntity<Object> turnOnOffBulb(@PathVariable Long id, @RequestBody Map<String, Boolean> param){
-        return new ResponseEntity<>("Bulb on/off changed", HttpStatus.OK);
+    @PostMapping("/{id}/bulbOnOf")
+    public ResponseEntity<Object> turnOnOffBulb(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
+        try{
+            terrariumService.bulbTurnOnOf(id, accessToken);
+        }catch (UnauthorizedException e){
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }catch (NotFoundException e){
+            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Name updated", HttpStatus.OK);
     }
 }
 

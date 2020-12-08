@@ -20,6 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.swing.text.html.Option;
+import java.lang.reflect.GenericSignatureFormatError;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -46,72 +50,89 @@ public class TerrariumService {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
-        if(user.isPresent()){
-            if(terrarium.isPresent()){
-                if(user.get().getId().equals(terrarium.get().getUser().getId())){
-                    return terrarium.get();
-                }else {
-                    throw new ForbiddenException();
-                }
-            }else {
-                throw new NotFoundException();
-            }
+        if(checkAuthForTerrarium(terrarium, user)){
+            return terrarium.get();
         }
-        throw new UnauthorizedException();
+        return null;
     }
 
     public boolean saveTerrariumSettings(Long id, String accessToken, TerrariumSettings settings) throws UnauthorizedException, NotFoundException, ForbiddenException {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
-        if(user.isPresent()){
-            if(terrarium.isPresent()){
-                if(terrarium.get().getUser().getId().equals(user.get().getId())){
-                    terrariumSettingsRepository.save(settings);
-                    return true;
-                }else {
-                    throw new ForbiddenException();
-                }
-            }else {
-                throw new NotFoundException();
-            }
+        if(checkAuthForTerrarium(terrarium, user)){
+            terrariumSettingsRepository.save(settings);
+            return true;
         }
-        throw new UnauthorizedException();
+        return false;
     }
 
     public boolean updateTerrariumName(Long id, String name, String accessToken) throws UnauthorizedException, NotFoundException {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
-        if(user.isPresent()){
-            if(terrarium.isPresent()){
-                if(terrarium.get().getUser().getId().equals(user.get().getId())){
-                    terrarium.get().setName(name);
-                    terrariumRepository.save(terrarium.get());
-                    return true;
-                }else {
-                    throw new UnauthorizedException();
-                }
-            }else {
-                throw new NotFoundException();
-            }
+        if(checkAuthForTerrarium(terrarium, user)){
+            terrarium.get().setName(name);
+            terrariumRepository.save(terrarium.get());
+            return true;
         }
-        throw new UnauthorizedException();
+        return false;
     }
 
     public void sendTerrariumSettings(TerrariumSettings terrariumSettings, String accessToken){
-        Optional<Terrarium> terrarium = terrariumRepository.getByTerrariumSettings(terrariumSettings.getId());
+        Optional<Terrarium> terrarium = terrariumRepository.getByTerrariumSettingsId(terrariumSettings.getId());
         if(terrarium.isPresent()){
-            RestTemplate restTemplate = new RestTemplate();
+            RestTemplate rest = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + accessToken);
             HttpEntity<TerrariumSettings> body = new HttpEntity<>(terrariumSettings, headers);
-            ResponseEntity<String> respone = restTemplate.exchange(
-                    "http://" + terrarium.get().getIp() + "/terrarium/test2",
+            ResponseEntity<String> response = rest.exchange(
+                    "http://" + terrarium.get().getIp() + "/terrarium/settings",
                     HttpMethod.POST,
                     body,
                     String.class);
         }
+
+    }
+
+    public void bulbTurnOnOf(Long id, String accessToken) throws UnauthorizedException, NotFoundException {
+        JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
+        Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
+        Optional<Terrarium> terrarium = terrariumRepository.findById(id);
+        if(checkAuthForTerrarium(terrarium, user)){
+            terrarium.get().getTerrariumSettings().setIsBulbWorking(!terrarium.get().getTerrariumSettings().getIsBulbWorking());
+            terrariumSettingsRepository.save(terrarium.get().getTerrariumSettings());
+
+            RestTemplate rest = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + accessToken);
+            HttpEntity<Map<String, Boolean>> body = new HttpEntity<>(
+                    Collections.singletonMap("bulbTurnOn", terrarium.get().getTerrariumSettings().getIsBulbWorking()),
+                    headers);
+            ResponseEntity<String> response = rest.exchange(
+                    "http://" + terrarium.get().getIp() + "/terrarium/bulbOnOf",
+                    HttpMethod.POST,
+                    body,
+                    String.class
+            );
+        }
+    }
+
+    public boolean checkAuthForTerrarium(Optional<Terrarium> terrarium, Optional<User> user) throws UnauthorizedException, NotFoundException {
+        if(user.isPresent()){
+            if(terrarium.isPresent()){
+                if(terrarium.get().getUser().getId().equals(user.get().getId())){
+                    return true;
+                }
+                else {
+                    throw new UnauthorizedException();
+                }
+            }
+            else {
+                throw new NotFoundException();
+            }
+        }
+        throw new UnauthorizedException();
 
     }
 }

@@ -15,5 +15,5 @@ public interface TerrariumRepository extends JpaRepository<Terrarium, Long> {
     Page<Terrarium> getAllByUserId(@Param("userId") Long userId, Pageable pageable);
 
     @Query("SELECT t FROM Terrarium t WHERE t.terrariumSettings.id = :settingsId")
-    Optional<Terrarium> getByTerrariumSettings(@Param("settingsId") Long terrariumSettingsId);
+    Optional<Terrarium> getByTerrariumSettingsId(@Param("settingsId") Long terrariumSettingsId);
 }

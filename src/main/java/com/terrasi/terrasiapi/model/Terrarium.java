@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +33,8 @@ public class Terrarium extends RepresentationModel<Terrarium> {
     @Size(min = 5)
     private String name;
 
-    @NotNull
-    private Boolean autoManagement;
+    @NotBlank
+    private String ip;
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)

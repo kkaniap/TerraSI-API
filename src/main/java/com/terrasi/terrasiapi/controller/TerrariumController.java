@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -71,7 +73,9 @@ public class TerrariumController {
     public ResponseEntity<String> saveTerrariumSettings(@PathVariable Long id, @RequestBody TerrariumSettings settings,
                                                         @RequestHeader("Authorization") String accessToken){
         try{
-            terrariumService.saveTerrariumSettings(id, accessToken, settings);
+            if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
+                terrariumService.sendTerrariumSettings(settings, accessToken);
+            }
         }catch (UnauthorizedException e){
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
         }catch (NotFoundException e){
@@ -93,6 +97,11 @@ public class TerrariumController {
             return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("Name updated", HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/bulb")
+    public ResponseEntity<Object> turnOnOffBulb(@PathVariable Long id, @RequestBody Map<String, Boolean> param){
+        return new ResponseEntity<>("Bulb on/off changed", HttpStatus.OK);
     }
 }
 

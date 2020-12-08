@@ -52,6 +52,8 @@ class TerrariumRepositoryTest {
         terrariumSettings.setSunriseTime(LocalTime.MIDNIGHT);
         terrariumSettings.setSunsetTime(LocalTime.MIDNIGHT);
         terrariumSettings.setSunSpeed(10);
+        terrariumSettings.setIsBulbWorking(false);
+        terrariumSettings.setAutoManagement(true);
 
         Alert alert = new Alert();
         alert.setCreateDate(LocalDateTime.now());
@@ -70,11 +72,11 @@ class TerrariumRepositoryTest {
         Terrarium terrarium = new Terrarium();
         terrarium.setUser(userRepository.getOne(2L));
         terrarium.setName("Spider terrarium");
-        terrarium.setAutoManagement(true);
         terrarium.setTerrariumSettings(terrariumSettings);
         terrarium.setCreateDate(LocalDate.now());
         terrarium.getSensorsReadsList().add(sensorsReads);
         terrarium.getAlerts().add(alert);
+        terrarium.setIp("localhost:8081");
 
         return terrarium;
     }

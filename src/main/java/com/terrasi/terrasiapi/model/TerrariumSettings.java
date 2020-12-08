@@ -46,4 +46,10 @@ public class TerrariumSettings {
     @Min(0)
     @NotNull
     private Integer sunSpeed;
+
+    @NotNull
+    private Boolean isBulbWorking;
+
+    @NotNull
+    private Boolean autoManagement;
 }

@@ -46,9 +46,9 @@ public final class PrepareTest {
     public static Page<Terrarium> getTerrariums(){
         if(terrariums == null){
             terrariums = new ArrayList<>();
-            terrariums.add(new Terrarium(1L, getUser(), "test", true, getTerrariumSettings(), getSensorsReads(),
+            terrariums.add(new Terrarium(1L, getUser(), "test", "localhost:8081", getTerrariumSettings(), getSensorsReads(),
                     LocalDate.now(), getAlerts()));
-            terrariums.add(new Terrarium(2L, getUser(), "test", true, getTerrariumSettings(), getSensorsReads(),
+            terrariums.add(new Terrarium(2L, getUser(), "test", "localhost:8081", getTerrariumSettings(), getSensorsReads(),
                     LocalDate.now(), getAlerts()));
         }
         return new PageImpl<>(terrariums);
@@ -57,7 +57,7 @@ public final class PrepareTest {
     public static TerrariumSettings getTerrariumSettings(){
         if(terrariumSettings == null){
             terrariumSettings = new TerrariumSettings(1L, 50, 50, LocalTime.now(),
-                    LocalTime.now(), 50);
+                    LocalTime.now(), 50, false, true);
         }
         return terrariumSettings;
     }

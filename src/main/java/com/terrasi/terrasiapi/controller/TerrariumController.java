@@ -74,8 +74,12 @@ public class TerrariumController {
                                                         @RequestHeader("Authorization") String accessToken){
         try{
             if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
-                System.out.println("testowanie");
-//                terrariumService.sendTerrariumSettings(settings, accessToken);
+                try{
+                    terrariumService.sendTerrariumSettings(settings, accessToken);
+                }catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+
             }
         }catch (UnauthorizedException e){
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);

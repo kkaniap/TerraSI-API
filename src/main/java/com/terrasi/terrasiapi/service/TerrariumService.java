@@ -115,6 +115,7 @@ public class TerrariumService {
                     body,
                     String.class
             );
+            System.out.println(response.getBody());
         }
     }
 

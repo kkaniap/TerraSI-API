@@ -14,5 +14,6 @@ public class DevCorsConfigurer implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .allowedOrigins("*")
                 .allowedHeaders("*");
+
     }
 }

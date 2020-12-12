@@ -110,7 +110,7 @@ public class TerrariumService {
                     Collections.singletonMap("bulbTurnOn", terrarium.get().getTerrariumSettings().getIsBulbWorking()),
                     headers);
             ResponseEntity<String> response = rest.exchange(
-                    "http://" + terrarium.get().getIp() + "/terrarium/bulbOnOf",
+                    "http://" + "192.168.55.103:8081" + "/terrarium/bulbOnOf",
                     HttpMethod.POST,
                     body,
                     String.class

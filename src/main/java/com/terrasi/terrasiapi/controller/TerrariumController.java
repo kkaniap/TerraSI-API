@@ -74,17 +74,7 @@ public class TerrariumController {
                                                         @RequestHeader("Authorization") String accessToken){
         try{
             if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
-                RestTemplate rest = new RestTemplate();
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Authorization", "Bearer " + accessToken);
-                System.out.println("kania1");
-                ResponseEntity<String> response = rest.exchange(
-                        "https://api.openweathermap.org/data/2.5/weather?q=Tychy&appid=fc3d47ffc2552e46aec52af4209a5947",
-                        HttpMethod.GET,
-                        HttpEntity.EMPTY,
-                        String.class
-                );
-                System.out.println(response.getBody());
+                terrariumService.sendTerrariumSettings(settings, accessToken);
             }
         }catch (UnauthorizedException e){
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);

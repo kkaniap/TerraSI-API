@@ -13,11 +13,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.Map;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -74,15 +74,17 @@ public class TerrariumController {
                                                         @RequestHeader("Authorization") String accessToken){
         try{
             if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("start");
-                        terrariumService.sendTerrariumSettings(settings, accessToken);
-                    }
-                };
-                Thread thread = new Thread(runnable);
-                thread.start();
+                RestTemplate rest = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", "Bearer " + accessToken);
+                System.out.println("kania1");
+                ResponseEntity<String> response = rest.exchange(
+                        "https://cat-fact.herokuapp.com/facts",
+                        HttpMethod.GET,
+                        HttpEntity.EMPTY,
+                        String.class
+                );
+                System.out.println(response.getBody());
             }
         }catch (UnauthorizedException e){
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);

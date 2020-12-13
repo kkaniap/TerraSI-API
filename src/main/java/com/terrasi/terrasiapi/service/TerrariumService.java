@@ -87,12 +87,16 @@ public class TerrariumService {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + accessToken);
             HttpEntity<TerrariumSettings> body = new HttpEntity<>(terrariumSettings, headers);
-            ResponseEntity<String> response = rest.exchange(
-                    "http://" + terrarium.get().getIp() + "/terrarium/settings",
-                    HttpMethod.POST,
-                    body,
-                    String.class);
-            System.out.println(response.getStatusCode() + response.getBody());
+            try{
+                ResponseEntity<String> response = rest.exchange(
+                        "http://" + terrarium.get().getIp() + "/terrarium/settings",
+                        HttpMethod.POST,
+                        body,
+                        String.class);
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+            System.out.println("test3");
         }
 
     }

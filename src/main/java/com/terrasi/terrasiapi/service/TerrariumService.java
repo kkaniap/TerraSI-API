@@ -82,6 +82,7 @@ public class TerrariumService {
     public void sendTerrariumSettings(TerrariumSettings terrariumSettings, String accessToken){
         Optional<Terrarium> terrarium = terrariumRepository.getByTerrariumSettingsId(terrariumSettings.getId());
         if(terrarium.isPresent()){
+            System.out.println("test2");
             RestTemplate rest = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + accessToken);

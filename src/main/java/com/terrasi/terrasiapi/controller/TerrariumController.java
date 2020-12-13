@@ -79,7 +79,7 @@ public class TerrariumController {
                 headers.set("Authorization", "Bearer " + accessToken);
                 System.out.println("kania1");
                 ResponseEntity<String> response = rest.exchange(
-                        "https://cat-fact.herokuapp.com/facts",
+                        "https://api.openweathermap.org/data/2.5/weather?q=Tychy&appid=fc3d47ffc2552e46aec52af4209a5947",
                         HttpMethod.GET,
                         HttpEntity.EMPTY,
                         String.class

@@ -91,6 +91,7 @@ public class TerrariumService {
                     HttpMethod.POST,
                     body,
                     String.class);
+            System.out.println(response.getStatusCode() + response.getBody());
         }
 
     }

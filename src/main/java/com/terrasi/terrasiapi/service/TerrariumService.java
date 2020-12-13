@@ -82,12 +82,13 @@ public class TerrariumService {
     public void sendTerrariumSettings(TerrariumSettings terrariumSettings, String accessToken){
         Optional<Terrarium> terrarium = terrariumRepository.getByTerrariumSettingsId(terrariumSettings.getId());
         if(terrarium.isPresent()){
+            try{
             System.out.println("test2");
             RestTemplate rest = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + accessToken);
             HttpEntity<TerrariumSettings> body = new HttpEntity<>(terrariumSettings, headers);
-            try{
+
                 ResponseEntity<String> response = rest.exchange(
                         "http://" + terrarium.get().getIp() + "/terrarium/settings",
                         HttpMethod.POST,

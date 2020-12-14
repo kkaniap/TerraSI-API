@@ -69,18 +69,24 @@ public class TerrariumController {
         return new ResponseEntity<>(terrarium, HttpStatus.OK);
     }
 
+    @GetMapping("/test")
+    public String kania(){
+        RestTemplate rest = new RestTemplate();
+        ResponseEntity<String> response = rest.exchange(
+                "http://192.168.55.109:8080/kania",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                String.class);
+        System.out.println(response.getBody());
+        return "test pass";
+    }
+
     @PutMapping("/{id}/settings")
     public ResponseEntity<String> saveTerrariumSettings(@PathVariable Long id, @RequestBody TerrariumSettings settings,
                                                         @RequestHeader("Authorization") String accessToken){
         try{
             if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
-                RestTemplate rest = new RestTemplate();
-                ResponseEntity<String> response = rest.exchange(
-                        "http://192.168.55.109:8080/kania",
-                        HttpMethod.GET,
-                        HttpEntity.EMPTY,
-                        String.class);
-                System.out.println(response.getBody());
+
             }
         }catch (UnauthorizedException e){
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);

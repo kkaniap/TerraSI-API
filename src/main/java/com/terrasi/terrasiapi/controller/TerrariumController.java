@@ -82,7 +82,7 @@ public class TerrariumController {
             System.out.println("t1");
             RestTemplate rest = new RestTemplate();
             ResponseEntity<String> response = rest.exchange(
-                    "http://192.168.55.109/kania",
+                    "https://tychysklep.herokuapp.com/kania",
                     HttpMethod.GET,
                     HttpEntity.EMPTY,
                     String.class);

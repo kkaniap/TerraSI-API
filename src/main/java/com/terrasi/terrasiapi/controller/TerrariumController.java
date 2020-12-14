@@ -71,6 +71,13 @@ public class TerrariumController {
 
     @GetMapping("/test")
     public String kania(){
+
+        return "test pass";
+    }
+
+    @PutMapping("/{id}/settings")
+    public ResponseEntity<String> saveTerrariumSettings(@PathVariable Long id, @RequestBody TerrariumSettings settings,
+                                                        @RequestHeader("Authorization") String accessToken){
         try {
             System.out.println("t1");
             RestTemplate rest = new RestTemplate();
@@ -82,23 +89,6 @@ public class TerrariumController {
             System.out.println(response.getBody());
         }catch (Exception e){
             System.out.println(e.getMessage());
-        }
-        return "test pass";
-    }
-
-    @PutMapping("/{id}/settings")
-    public ResponseEntity<String> saveTerrariumSettings(@PathVariable Long id, @RequestBody TerrariumSettings settings,
-                                                        @RequestHeader("Authorization") String accessToken){
-        try{
-            if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
-
-            }
-        }catch (UnauthorizedException e){
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }catch (NotFoundException e){
-            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
-        }catch (ForbiddenException e){
-            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>("Settings updated", HttpStatus.OK);
     }

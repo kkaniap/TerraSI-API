@@ -74,20 +74,13 @@ public class TerrariumController {
                                                         @RequestHeader("Authorization") String accessToken){
         try{
             if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        RestTemplate rest = new RestTemplate();
-                        ResponseEntity<String> response = rest.exchange(
-                                "http://192.168.55.109:8080/kania",
-                                HttpMethod.POST,
-                                HttpEntity.EMPTY,
-                                String.class);
-                        System.out.println(response.getBody());
-                    }
-                };
-                Thread t = new Thread(runnable);
-                t.start();
+                RestTemplate rest = new RestTemplate();
+                ResponseEntity<String> response = rest.exchange(
+                        "http://192.168.55.109:8080/kania",
+                        HttpMethod.GET,
+                        HttpEntity.EMPTY,
+                        String.class);
+                System.out.println(response.getBody());
             }
         }catch (UnauthorizedException e){
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);

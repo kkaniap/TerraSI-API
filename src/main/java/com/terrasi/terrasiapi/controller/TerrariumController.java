@@ -71,13 +71,18 @@ public class TerrariumController {
 
     @GetMapping("/test")
     public String kania(){
-        RestTemplate rest = new RestTemplate();
-        ResponseEntity<String> response = rest.exchange(
-                "http://192.168.55.109:8080/kania",
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                String.class);
-        System.out.println(response.getBody());
+        try {
+            System.out.println("t1");
+            RestTemplate rest = new RestTemplate();
+            ResponseEntity<String> response = rest.exchange(
+                    "http://192.168.55.109:8080/kania",
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    String.class);
+            System.out.println(response.getBody());
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         return "test pass";
     }
 

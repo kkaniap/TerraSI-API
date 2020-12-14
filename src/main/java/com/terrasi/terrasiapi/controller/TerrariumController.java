@@ -77,7 +77,13 @@ public class TerrariumController {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        terrariumService.sendTerrariumSettings(settings, accessToken);
+                        RestTemplate rest = new RestTemplate();
+                        ResponseEntity<String> response = rest.exchange(
+                                "http://192.168.55.109:8080/kania",
+                                HttpMethod.POST,
+                                HttpEntity.EMPTY,
+                                String.class);
+                        System.out.println(response.getBody());
                     }
                 };
                 Thread t = new Thread(runnable);

@@ -13,12 +13,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET,"/news/**").authenticated()
-                .antMatchers(HttpMethod.GET,"/terrariums/**").authenticated()
-                .antMatchers(HttpMethod.PUT,"/terrariums/**").authenticated()
+                .antMatchers(HttpMethod.GET,"/news/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/terrariums/**").permitAll()
+                .antMatchers(HttpMethod.PUT,"/terrariums/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/login").permitAll()
                 .antMatchers(HttpMethod.POST,"/refreshToken").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

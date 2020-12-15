@@ -20,7 +20,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/refreshToken").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JwtFilter(authenticationManager()))
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

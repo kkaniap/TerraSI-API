@@ -73,13 +73,7 @@ public class TerrariumController {
                                                         @RequestHeader("Authorization") String accessToken){
         try{
             if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
-                RestTemplate rest = new RestTemplate();
-                ResponseEntity<String> response = rest.exchange(
-                        "https://192.168.55.109/kania",
-                        HttpMethod.GET,
-                        HttpEntity.EMPTY,
-                        String.class);
-                System.out.println(response.getBody());
+                terrariumService.sendTerrariumSettings(settings, accessToken);
             }
         }catch (UnauthorizedException e){
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);

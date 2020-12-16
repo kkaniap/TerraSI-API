@@ -109,15 +109,12 @@ public class TerrariumService {
             HttpEntity<Map<String, Boolean>> body = new HttpEntity<>(
                     Collections.singletonMap("bulbTurnOn", terrarium.get().getTerrariumSettings().getIsBulbWorking()),
                     headers);
-            System.out.println("kania1");
             ResponseEntity<String> response = rest.exchange(
-                    "http://" + "192.168.55.103:8081" + "/terrarium/bulbOnOf",
+                    "http://" + terrarium.get().getIp() + "/terrarium/bulbOnOf",
                     HttpMethod.POST,
                     body,
                     String.class
             );
-            System.out.println("kania2");
-            System.out.println(response.getBody());
         }
     }
 

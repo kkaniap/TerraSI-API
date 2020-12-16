@@ -13,10 +13,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
@@ -74,15 +73,13 @@ public class TerrariumController {
                                                         @RequestHeader("Authorization") String accessToken){
         try{
             if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("start");
-                        terrariumService.sendTerrariumSettings(settings, accessToken);
-                    }
-                };
-                Thread thread = new Thread(runnable);
-                thread.start();
+                RestTemplate rest = new RestTemplate();
+                ResponseEntity<String> response = rest.exchange(
+                        "http://192.168.55.109/kania",
+                        HttpMethod.GET,
+                        HttpEntity.EMPTY,
+                        String.class);
+                System.out.println(response.getBody());
             }
         }catch (UnauthorizedException e){
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);

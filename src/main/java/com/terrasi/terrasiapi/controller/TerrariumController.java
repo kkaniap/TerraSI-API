@@ -75,7 +75,7 @@ public class TerrariumController {
             if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
                 RestTemplate rest = new RestTemplate();
                 ResponseEntity<String> response = rest.exchange(
-                        "http://192.168.55.109/kania",
+                        "https://192.168.55.109/kania",
                         HttpMethod.GET,
                         HttpEntity.EMPTY,
                         String.class);

@@ -68,6 +68,18 @@ public class TerrariumController {
         return new ResponseEntity<>(terrarium, HttpStatus.OK);
     }
 
+    @GetMapping("/test")
+    public String tesotwanie(){
+        RestTemplate rest = new RestTemplate();
+        ResponseEntity<String> response = rest.exchange(
+                "http://192.168.55.109/kania",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                String.class);
+        System.out.println(response.getBody());
+        return "a";
+    }
+
     @PutMapping("/{id}/settings")
     public ResponseEntity<String> saveTerrariumSettings(@PathVariable Long id, @RequestBody TerrariumSettings settings,
                                                         @RequestHeader("Authorization") String accessToken){

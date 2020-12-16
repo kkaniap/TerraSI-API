@@ -17,13 +17,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collections;
 import java.util.Map;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -75,54 +68,32 @@ public class TerrariumController {
         return new ResponseEntity<>(terrarium, HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public String kania() throws IOException {
-        URL obj = new URL("http://192.168.55.109/kania");
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", "Chrome/87.0.4280.88");
-        int responseCode = con.getResponseCode();
-        System.out.println("GET Response Code :: " + responseCode);
-        if (responseCode == HttpURLConnection.HTTP_OK) { // success
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            // print result
-            System.out.println(response.toString());
-        } else {
-            System.out.println("GET request not worked");
-        }
-        return "test pass";
-    }
-
     @PutMapping("/{id}/settings")
     public ResponseEntity<String> saveTerrariumSettings(@PathVariable Long id, @RequestBody TerrariumSettings settings,
                                                         @RequestHeader("Authorization") String accessToken){
-        try {
-            System.out.println("t1");
-            RestTemplate rest = new RestTemplate();
-            ResponseEntity<String> response = rest.exchange(
-                    "http://192.168.55.109/kania",
-                    HttpMethod.GET,
-                    HttpEntity.EMPTY,
-                    String.class);
-            System.out.println(response.getBody());
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+        try{
+            if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
+                RestTemplate rest = new RestTemplate();
+                ResponseEntity<String> response = rest.exchange(
+                        "http://192.168.55.109/kania",
+                        HttpMethod.GET,
+                        HttpEntity.EMPTY,
+                        String.class);
+                System.out.println(response.getBody());
+            }
+        }catch (UnauthorizedException e){
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }catch (NotFoundException e){
+            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
+        }catch (ForbiddenException e){
+            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>("Settings updated", HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/name")
     public ResponseEntity<String> updateTerrariumName(@PathVariable Long id, @RequestBody String name,
-                                    @RequestHeader("Authorization") String accessToken){
+                                                      @RequestHeader("Authorization") String accessToken){
         try{
             terrariumService.updateTerrariumName(id, name, accessToken);
         }catch (UnauthorizedException e){

@@ -106,11 +106,34 @@ public class TerrariumService {
             RestTemplate rest = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + accessToken);
-            HttpEntity<Map<String, Boolean>> body = new HttpEntity<>(
-                    Collections.singletonMap("bulbTurnOn", terrarium.get().getTerrariumSettings().getIsBulbWorking()),
+            HttpEntity<Map<String, String>> body = new HttpEntity<>(
+                    Collections.singletonMap("bulb", terrarium.get().getTerrariumSettings().getIsBulbWorking() ? "1" : "0"),
                     headers);
             ResponseEntity<String> response = rest.exchange(
                     "http://" + terrarium.get().getIp() + "/terrarium/bulbOnOf",
+                    HttpMethod.POST,
+                    body,
+                    String.class
+            );
+        }
+    }
+
+    public void humidifierTurnOnOf(Long id, String accessToken) throws UnauthorizedException, NotFoundException {
+        JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
+        Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
+        Optional<Terrarium> terrarium = terrariumRepository.findById(id);
+        if(checkAuthForTerrarium(terrarium, user)){
+            terrarium.get().getTerrariumSettings().setIsHumidifierWorking(!terrarium.get().getTerrariumSettings().getIsHumidifierWorking());
+            terrariumSettingsRepository.save(terrarium.get().getTerrariumSettings());
+
+            RestTemplate rest = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + accessToken);
+            HttpEntity<Map<String, String>> body = new HttpEntity<>(
+                    Collections.singletonMap("humidifier", terrarium.get().getTerrariumSettings().getIsHumidifierWorking() ? "ON" : "OFF"),
+                    headers);
+            ResponseEntity<String> response = rest.exchange(
+                    "http://" + terrarium.get().getIp() + "/terrarium/humidifierOnOff",
                     HttpMethod.POST,
                     body,
                     String.class

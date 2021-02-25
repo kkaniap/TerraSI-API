@@ -51,5 +51,8 @@ public class TerrariumSettings {
     private Boolean isBulbWorking;
 
     @NotNull
+    private Boolean isHumidifierWorking;
+
+    @NotNull
     private Boolean autoManagement;
 }

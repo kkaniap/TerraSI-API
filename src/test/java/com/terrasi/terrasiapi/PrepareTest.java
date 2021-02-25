@@ -57,7 +57,7 @@ public final class PrepareTest {
     public static TerrariumSettings getTerrariumSettings(){
         if(terrariumSettings == null){
             terrariumSettings = new TerrariumSettings(1L, 50, 50, LocalTime.now(),
-                    LocalTime.now(), 50, false, true);
+                    LocalTime.now(), 50, false, false, true);
         }
         return terrariumSettings;
     }

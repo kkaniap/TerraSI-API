@@ -109,6 +109,18 @@ public class TerrariumController {
         }
         return new ResponseEntity<>("Name updated", HttpStatus.OK);
     }
+
+    @PostMapping("/{id}/humidifierOnOff")
+    public ResponseEntity<Object> turnOnOffHumidifier(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
+        try{
+            terrariumService.humidifierTurnOnOf(id, accessToken);
+        }catch (UnauthorizedException e){
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }catch (NotFoundException e){
+            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Name updated", HttpStatus.OK);
+    }
 }
 
 

@@ -32,7 +32,7 @@ public class LoginService {
                 .setSubject(user.getUsername())
                 .claim("roles", user.getRoles().stream().map(UserRole::getRole).toArray())
                 .setIssuedAt(new Date(time))
-                .setExpiration(new Date(time + 1000*60*2))
+                .setExpiration(new Date(time + 1000*60*2*60))
                 .signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
                 .compact();
     }

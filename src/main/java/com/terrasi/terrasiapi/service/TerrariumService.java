@@ -11,6 +11,8 @@ import com.terrasi.terrasiapi.model.User;
 import com.terrasi.terrasiapi.repository.TerrariumRepository;
 import com.terrasi.terrasiapi.repository.TerrariumSettingsRepository;
 import com.terrasi.terrasiapi.repository.UserRepository;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
@@ -20,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.swing.text.html.Option;
-import java.lang.reflect.GenericSignatureFormatError;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -32,12 +32,14 @@ public class TerrariumService {
     private final UserRepository userRepository;
     private final TerrariumRepository terrariumRepository;
     private final TerrariumSettingsRepository terrariumSettingsRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     public TerrariumService(UserRepository userRepository, TerrariumRepository terrariumRepository,
-                            TerrariumSettingsRepository terrariumSettingsRepository) {
+                            TerrariumSettingsRepository terrariumSettingsRepository, RabbitTemplate rabbitTemplate) {
         this.userRepository = userRepository;
         this.terrariumRepository = terrariumRepository;
         this.terrariumSettingsRepository = terrariumSettingsRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public Page<Terrarium> getTerrariumsByToken(String accessToken, Pageable page){
@@ -81,18 +83,7 @@ public class TerrariumService {
 
     public void sendTerrariumSettings(TerrariumSettings terrariumSettings, String accessToken){
         Optional<Terrarium> terrarium = terrariumRepository.getByTerrariumSettingsId(terrariumSettings.getId());
-        if(terrarium.isPresent()){
-            RestTemplate rest = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + accessToken);
-            HttpEntity<TerrariumSettings> body = new HttpEntity<>(terrariumSettings, headers);
-            ResponseEntity<String> response = rest.exchange(
-                    "http://" + terrarium.get().getIp() + "/terrarium/settings",
-                    HttpMethod.POST,
-                    body,
-                    String.class);
-        }
-
+        terrarium.ifPresent(value -> rabbitTemplate.convertAndSend("test", value.getTerrariumSettings()));
     }
 
     public void bulbTurnOnOf(Long id, String accessToken) throws UnauthorizedException, NotFoundException {
@@ -102,19 +93,7 @@ public class TerrariumService {
         if(checkAuthForTerrarium(terrarium, user)){
             terrarium.get().getTerrariumSettings().setIsBulbWorking(!terrarium.get().getTerrariumSettings().getIsBulbWorking());
             terrariumSettingsRepository.save(terrarium.get().getTerrariumSettings());
-
-            RestTemplate rest = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + accessToken);
-            HttpEntity<Map<String, String>> body = new HttpEntity<>(
-                    Collections.singletonMap("bulb", terrarium.get().getTerrariumSettings().getIsBulbWorking() ? "1" : "0"),
-                    headers);
-            ResponseEntity<String> response = rest.exchange(
-                    "http://" + terrarium.get().getIp() + "/terrarium/bulbOnOf",
-                    HttpMethod.POST,
-                    body,
-                    String.class
-            );
+            rabbitTemplate.convertAndSend("test", terrarium.get().getTerrariumSettings());
         }
     }
 
@@ -125,19 +104,7 @@ public class TerrariumService {
         if(checkAuthForTerrarium(terrarium, user)){
             terrarium.get().getTerrariumSettings().setIsHumidifierWorking(!terrarium.get().getTerrariumSettings().getIsHumidifierWorking());
             terrariumSettingsRepository.save(terrarium.get().getTerrariumSettings());
-
-            RestTemplate rest = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + accessToken);
-            HttpEntity<Map<String, String>> body = new HttpEntity<>(
-                    Collections.singletonMap("humidifier", terrarium.get().getTerrariumSettings().getIsHumidifierWorking() ? "ON" : "OFF"),
-                    headers);
-            ResponseEntity<String> response = rest.exchange(
-                    "http://" + terrarium.get().getIp() + "/terrarium/humidifierOnOff",
-                    HttpMethod.POST,
-                    body,
-                    String.class
-            );
+            rabbitTemplate.convertAndSend("test", terrarium.get().getTerrariumSettings());
         }
     }
 

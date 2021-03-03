@@ -13,13 +13,14 @@ import javax.persistence.Id;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalTime;
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class TerrariumSettings {
+public class TerrariumSettings implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

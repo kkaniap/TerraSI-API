@@ -11,6 +11,7 @@ import com.terrasi.terrasiapi.model.User;
 import com.terrasi.terrasiapi.repository.TerrariumRepository;
 import com.terrasi.terrasiapi.repository.TerrariumSettingsRepository;
 import com.terrasi.terrasiapi.repository.UserRepository;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class TerrariumService {
     private final TerrariumRepository terrariumRepository;
     private final TerrariumSettingsRepository terrariumSettingsRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final RabbitAdmin rabbitAdmin;
 
     public TerrariumService(UserRepository userRepository, TerrariumRepository terrariumRepository,
                             TerrariumSettingsRepository terrariumSettingsRepository, RabbitTemplate rabbitTemplate) {
@@ -40,6 +42,7 @@ public class TerrariumService {
         this.terrariumRepository = terrariumRepository;
         this.terrariumSettingsRepository = terrariumSettingsRepository;
         this.rabbitTemplate = rabbitTemplate;
+        this.rabbitAdmin = new RabbitAdmin(rabbitTemplate);
     }
 
     public Page<Terrarium> getTerrariumsByToken(String accessToken, Pageable page){
@@ -93,7 +96,8 @@ public class TerrariumService {
         if(checkAuthForTerrarium(terrarium, user)){
             terrarium.get().getTerrariumSettings().setIsBulbWorking(!terrarium.get().getTerrariumSettings().getIsBulbWorking());
             terrariumSettingsRepository.save(terrarium.get().getTerrariumSettings());
-            rabbitTemplate.convertAndSend("test", terrarium.get().getTerrariumSettings());
+            rabbitAdmin.purgeQueue(getRabbitQueueName(terrarium.get(), user.get()));
+            rabbitTemplate.convertAndSend(getRabbitQueueName(terrarium.get(), user.get()), terrarium.get().getTerrariumSettings());
         }
     }
 
@@ -104,8 +108,17 @@ public class TerrariumService {
         if(checkAuthForTerrarium(terrarium, user)){
             terrarium.get().getTerrariumSettings().setIsHumidifierWorking(!terrarium.get().getTerrariumSettings().getIsHumidifierWorking());
             terrariumSettingsRepository.save(terrarium.get().getTerrariumSettings());
-            rabbitTemplate.convertAndSend("test", terrarium.get().getTerrariumSettings());
+            rabbitAdmin.purgeQueue(getRabbitQueueName(terrarium.get(), user.get()));
+            rabbitTemplate.convertAndSend(getRabbitQueueName(terrarium.get(), user.get()), terrarium.get().getTerrariumSettings());
         }
+    }
+
+    public String getRabbitQueueName(Terrarium terrarium, User user){
+        return new StringBuilder("Raspberry_")
+                .append(user.getUsername())
+                .append('_')
+                .append(terrarium.getName())
+                .toString();
     }
 
     public boolean checkAuthForTerrarium(Optional<Terrarium> terrarium, Optional<User> user) throws UnauthorizedException, NotFoundException {

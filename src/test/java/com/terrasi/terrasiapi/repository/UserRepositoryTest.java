@@ -96,7 +96,6 @@ class UserRepositoryTest {
         terrarium.setCreateDate(LocalDate.now());
         terrarium.getSensorsReadsList().add(sensorsReads);
         terrarium.getAlerts().add(alert);
-        terrarium.setIp("localhost:8081");
 
         return terrarium;
     }

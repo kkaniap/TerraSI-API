@@ -33,9 +33,6 @@ public class Terrarium extends RepresentationModel<Terrarium> {
     @Size(min = 5)
     private String name;
 
-    @NotBlank
-    private String ip;
-
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)
     private TerrariumSettings terrariumSettings;

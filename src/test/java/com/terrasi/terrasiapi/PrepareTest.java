@@ -46,9 +46,9 @@ public final class PrepareTest {
     public static Page<Terrarium> getTerrariums(){
         if(terrariums == null){
             terrariums = new ArrayList<>();
-            terrariums.add(new Terrarium(1L, getUser(), "test", "localhost:8081", getTerrariumSettings(), getSensorsReads(),
+            terrariums.add(new Terrarium(1L, getUser(), "test", getTerrariumSettings(), getSensorsReads(),
                     LocalDate.now(), getAlerts()));
-            terrariums.add(new Terrarium(2L, getUser(), "test", "localhost:8081", getTerrariumSettings(), getSensorsReads(),
+            terrariums.add(new Terrarium(2L, getUser(), "test", getTerrariumSettings(), getSensorsReads(),
                     LocalDate.now(), getAlerts()));
         }
         return new PageImpl<>(terrariums);

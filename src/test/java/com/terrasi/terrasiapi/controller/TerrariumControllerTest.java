@@ -1,7 +1,6 @@
 package com.terrasi.terrasiapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.terrasi.terrasiapi.PrepareTest;
 import com.terrasi.terrasiapi.Utils.JwtUtils;
 import com.terrasi.terrasiapi.exception.ForbiddenException;

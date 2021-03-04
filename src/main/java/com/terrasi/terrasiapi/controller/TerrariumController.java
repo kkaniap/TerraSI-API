@@ -1,5 +1,6 @@
 package com.terrasi.terrasiapi.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.terrasi.terrasiapi.exception.ForbiddenException;
 import com.terrasi.terrasiapi.exception.NotFoundException;
 import com.terrasi.terrasiapi.exception.UnauthorizedException;
@@ -13,11 +14,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Map;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -82,6 +82,9 @@ public class TerrariumController {
         }catch (ForbiddenException e){
             return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
         }
+        catch (JsonProcessingException e){
+            return new ResponseEntity<>("Internal server error during parsing to json", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>("Settings updated", HttpStatus.OK);
     }
 
@@ -99,7 +102,7 @@ public class TerrariumController {
     }
 
     @PostMapping("/{id}/bulbOnOf")
-    public ResponseEntity<Object> turnOnOffBulb(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
+    public ResponseEntity<Object> turnOnOffBulb(@PathVariable Long id, @RequestHeader("Authorization") String accessToken) throws JsonProcessingException {
         try{
             terrariumService.bulbTurnOnOf(id, accessToken);
         }catch (UnauthorizedException e){
@@ -118,6 +121,8 @@ public class TerrariumController {
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
         }catch (NotFoundException e){
             return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
+        }catch (JsonProcessingException e){
+            return new ResponseEntity<>("Internal server error during parsing to json", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Name updated", HttpStatus.OK);
     }

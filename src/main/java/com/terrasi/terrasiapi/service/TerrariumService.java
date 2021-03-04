@@ -1,5 +1,7 @@
 package com.terrasi.terrasiapi.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terrasi.terrasiapi.Utils.JwtUtils;
 import com.terrasi.terrasiapi.exception.ForbiddenException;
 import com.terrasi.terrasiapi.exception.NotFoundException;
@@ -11,20 +13,12 @@ import com.terrasi.terrasiapi.model.User;
 import com.terrasi.terrasiapi.repository.TerrariumRepository;
 import com.terrasi.terrasiapi.repository.TerrariumSettingsRepository;
 import com.terrasi.terrasiapi.repository.UserRepository;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -35,14 +29,16 @@ public class TerrariumService {
     private final TerrariumSettingsRepository terrariumSettingsRepository;
     private final RabbitTemplate rabbitTemplate;
     private final RabbitAdmin rabbitAdmin;
+    private final ObjectMapper objectMapper;
 
     public TerrariumService(UserRepository userRepository, TerrariumRepository terrariumRepository,
-                            TerrariumSettingsRepository terrariumSettingsRepository, RabbitTemplate rabbitTemplate) {
+                            TerrariumSettingsRepository terrariumSettingsRepository, RabbitTemplate rabbitTemplate, ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.terrariumRepository = terrariumRepository;
         this.terrariumSettingsRepository = terrariumSettingsRepository;
         this.rabbitTemplate = rabbitTemplate;
         this.rabbitAdmin = new RabbitAdmin(rabbitTemplate);
+        this.objectMapper = objectMapper;
     }
 
     public Page<Terrarium> getTerrariumsByToken(String accessToken, Pageable page){
@@ -84,12 +80,17 @@ public class TerrariumService {
         return false;
     }
 
-    public void sendTerrariumSettings(TerrariumSettings terrariumSettings, String accessToken){
+    public void sendTerrariumSettings(TerrariumSettings terrariumSettings, String accessToken) throws JsonProcessingException {
+        JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
+        Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.getByTerrariumSettingsId(terrariumSettings.getId());
-        terrarium.ifPresent(value -> rabbitTemplate.convertAndSend("test", value.getTerrariumSettings()));
+        if(terrarium.isPresent()){
+            rabbitTemplate.convertAndSend(getRabbitQueueName(terrarium.get(), user.get()),
+                    objectMapper.writeValueAsString(terrarium.get().getTerrariumSettings()));
+        }
     }
 
-    public void bulbTurnOnOf(Long id, String accessToken) throws UnauthorizedException, NotFoundException {
+    public void bulbTurnOnOf(Long id, String accessToken) throws UnauthorizedException, NotFoundException, JsonProcessingException {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
@@ -97,11 +98,12 @@ public class TerrariumService {
             terrarium.get().getTerrariumSettings().setIsBulbWorking(!terrarium.get().getTerrariumSettings().getIsBulbWorking());
             terrariumSettingsRepository.save(terrarium.get().getTerrariumSettings());
             rabbitAdmin.purgeQueue(getRabbitQueueName(terrarium.get(), user.get()));
-            rabbitTemplate.convertAndSend(getRabbitQueueName(terrarium.get(), user.get()), terrarium.get().getTerrariumSettings());
+            rabbitTemplate.convertAndSend(getRabbitQueueName(terrarium.get(), user.get()),
+                    objectMapper.writeValueAsString(terrarium.get().getTerrariumSettings()));
         }
     }
 
-    public void humidifierTurnOnOf(Long id, String accessToken) throws UnauthorizedException, NotFoundException {
+    public void humidifierTurnOnOf(Long id, String accessToken) throws UnauthorizedException, NotFoundException, JsonProcessingException {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
@@ -109,7 +111,8 @@ public class TerrariumService {
             terrarium.get().getTerrariumSettings().setIsHumidifierWorking(!terrarium.get().getTerrariumSettings().getIsHumidifierWorking());
             terrariumSettingsRepository.save(terrarium.get().getTerrariumSettings());
             rabbitAdmin.purgeQueue(getRabbitQueueName(terrarium.get(), user.get()));
-            rabbitTemplate.convertAndSend(getRabbitQueueName(terrarium.get(), user.get()), terrarium.get().getTerrariumSettings());
+            rabbitTemplate.convertAndSend(getRabbitQueueName(terrarium.get(), user.get()),
+                    objectMapper.writeValueAsString(terrarium.get().getTerrariumSettings()));
         }
     }
 

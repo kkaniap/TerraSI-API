@@ -35,6 +35,11 @@ public class TerrariumSettings {
     @NotNull
     private Integer humidityLevel;
 
+    @Min(0)
+    @Max(100)
+    @NotNull
+    private Integer waterLevel;
+
     @NotNull
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     private LocalTime sunriseTime;

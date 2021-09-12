@@ -16,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -51,7 +53,11 @@ public class NewsController {
     public ResponseEntity<News> getNews(@PathVariable Long id) {
         Optional<News> news = newsRepository.findById(id);
         if (news.isPresent()) {
-            news.get().setContent(newsService.readNews(id));
+            try {
+                news.get().setContent(newsService.readNews(id));
+            } catch (IOException ex) {
+                throw new NewsNotFoundException(id);
+            }
             news.get().add(linkTo(methodOn(NewsController.class).getNews(id)).withSelfRel());
             return new ResponseEntity<>(news.get(), HttpStatus.OK);
         }

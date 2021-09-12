@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terrasi.terrasiapi.Utils.JwtUtils;
 import com.terrasi.terrasiapi.exception.ForbiddenException;
 import com.terrasi.terrasiapi.exception.NotFoundException;
+import com.terrasi.terrasiapi.exception.TerrariumNotFoundException;
 import com.terrasi.terrasiapi.exception.UnauthorizedException;
 import com.terrasi.terrasiapi.model.JwtModel;
 import com.terrasi.terrasiapi.model.Terrarium;
@@ -47,7 +48,7 @@ public class TerrariumService {
         return user.map(value -> terrariumRepository.getAllByUserId(value.getId(), page)).orElse(null);
     }
 
-    public Terrarium getTerrariumById(Long id, String accessToken) throws NotFoundException, ForbiddenException, UnauthorizedException {
+    public Terrarium getTerrariumById(Long id, String accessToken){
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
@@ -57,7 +58,7 @@ public class TerrariumService {
         return null;
     }
 
-    public boolean saveTerrariumSettings(Long id, String accessToken, TerrariumSettings settings) throws UnauthorizedException, NotFoundException, ForbiddenException {
+    public boolean saveTerrariumSettings(Long id, String accessToken, TerrariumSettings settings){
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
@@ -68,7 +69,7 @@ public class TerrariumService {
         return false;
     }
 
-    public boolean updateTerrariumName(Long id, String name, String accessToken) throws UnauthorizedException, NotFoundException {
+    public boolean updateTerrariumName(Long id, String name, String accessToken){
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
@@ -90,7 +91,7 @@ public class TerrariumService {
         }
     }
 
-    public void bulbTurnOnOf(Long id, String accessToken) throws UnauthorizedException, NotFoundException, JsonProcessingException {
+    public void bulbTurnOnOf(Long id, String accessToken) throws JsonProcessingException {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
@@ -103,7 +104,7 @@ public class TerrariumService {
         }
     }
 
-    public void humidifierTurnOnOf(Long id, String accessToken) throws UnauthorizedException, NotFoundException, JsonProcessingException {
+    public void humidifierTurnOnOf(Long id, String accessToken) throws JsonProcessingException {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
@@ -124,7 +125,7 @@ public class TerrariumService {
                 .toString();
     }
 
-    public boolean checkAuthForTerrarium(Optional<Terrarium> terrarium, Optional<User> user) throws UnauthorizedException, NotFoundException {
+    public boolean checkAuthForTerrarium(Optional<Terrarium> terrarium, Optional<User> user) {
         if(user.isPresent()){
             if(terrarium.isPresent()){
                 if(terrarium.get().getUser().getId().equals(user.get().getId())){
@@ -135,7 +136,7 @@ public class TerrariumService {
                 }
             }
             else {
-                throw new NotFoundException();
+                throw new TerrariumNotFoundException();
             }
         }
         throw new UnauthorizedException();

@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/terrariums", produces = {MediaType.APPLICATION_JSON_VALUE, MediaTypes.HAL_JSON_VALUE})
@@ -51,16 +50,7 @@ public class TerrariumController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<Object> getTerrariumById(@PathVariable Long id, @RequestHeader("Authorization") String accessToken) {
-        Terrarium terrarium;
-        try {
-            terrarium = terrariumService.getTerrariumById(id, accessToken);
-        } catch (UnauthorizedException e) {
-            throw new UnauthorizedException();
-        } catch (NotFoundException e) {
-            throw new TerrariumNotFoundException(id);
-        } catch (ForbiddenException e) {
-            throw new ForbiddenException();
-        }
+        Terrarium terrarium = terrariumService.getTerrariumById(id, accessToken);
         terrarium.add(linkTo(methodOn(TerrariumController.class).getTerrariumById(id, "")).withSelfRel());
         return new ResponseEntity<>(terrarium, HttpStatus.OK);
     }
@@ -68,43 +58,31 @@ public class TerrariumController {
     @PutMapping("/{id}/settings")
     public ResponseEntity<String> saveTerrariumSettings(@PathVariable Long id, @RequestBody TerrariumSettings settings,
                                                         @RequestHeader("Authorization") String accessToken) {
-        try {
-            if (terrariumService.saveTerrariumSettings(id, accessToken, settings)) {
+
+        if (terrariumService.saveTerrariumSettings(id, accessToken, settings)) {
+            try {
                 terrariumService.sendTerrariumSettings(settings, accessToken);
+            } catch (JsonProcessingException ex) {
+                return new ResponseEntity<>("Internal server error during parsing to json", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        } catch (UnauthorizedException e) {
-            throw new UnauthorizedException();
-        } catch (NotFoundException e) {
-            throw new TerrariumNotFoundException(id);
-        } catch (ForbiddenException e) {
-            throw new ForbiddenException();
-        } catch (JsonProcessingException e) {
-            return new ResponseEntity<>("Internal server error during parsing to json", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
         return new ResponseEntity<>("Settings updated", HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/name")
     public ResponseEntity<String> updateTerrariumName(@PathVariable Long id, @RequestBody String name,
                                                       @RequestHeader("Authorization") String accessToken) {
-        try {
-            terrariumService.updateTerrariumName(id, name, accessToken);
-        } catch (UnauthorizedException e) {
-            throw new UnauthorizedException();
-        } catch (NotFoundException e) {
-            throw new TerrariumNotFoundException(id);
-        }
+        terrariumService.updateTerrariumName(id, name, accessToken);
         return new ResponseEntity<>("Name updated", HttpStatus.OK);
     }
 
     @PostMapping("/{id}/bulbOnOf")
-    public ResponseEntity<Object> turnOnOffBulb(@PathVariable Long id, @RequestHeader("Authorization") String accessToken) throws JsonProcessingException {
+    public ResponseEntity<Object> turnOnOffBulb(@PathVariable Long id, @RequestHeader("Authorization") String accessToken) {
         try {
             terrariumService.bulbTurnOnOf(id, accessToken);
-        } catch (UnauthorizedException e) {
-            throw new UnauthorizedException();
-        } catch (NotFoundException e) {
-            throw new TerrariumNotFoundException(id);
+        } catch (JsonProcessingException ex) {
+            return new ResponseEntity<>("Internal server error during parsing to json", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Name updated", HttpStatus.OK);
     }
@@ -113,11 +91,7 @@ public class TerrariumController {
     public ResponseEntity<Object> turnOnOffHumidifier(@PathVariable Long id, @RequestHeader("Authorization") String accessToken) {
         try {
             terrariumService.humidifierTurnOnOf(id, accessToken);
-        } catch (UnauthorizedException e) {
-            throw new UnauthorizedException();
-        } catch (NotFoundException e) {
-            throw new TerrariumNotFoundException(id);
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException ex) {
             return new ResponseEntity<>("Internal server error during parsing to json", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Name updated", HttpStatus.OK);

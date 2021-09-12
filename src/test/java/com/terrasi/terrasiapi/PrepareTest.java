@@ -43,16 +43,16 @@ public final class PrepareTest {
         return new PageImpl<>(news);
     }
 
-    public static Page<Terrarium> getTerrariums(){
-        if(terrariums == null){
-            terrariums = new ArrayList<>();
-            terrariums.add(new Terrarium(1L, getUser(), "test", getTerrariumSettings(), getSensorsReads(),
-                    LocalDate.now(), getAlerts()));
-            terrariums.add(new Terrarium(2L, getUser(), "test", getTerrariumSettings(), getSensorsReads(),
-                    LocalDate.now(), getAlerts()));
-        }
-        return new PageImpl<>(terrariums);
-    }
+//    public static Page<Terrarium> getTerrariums(){
+//        if(terrariums == null){
+//            terrariums = new ArrayList<>();
+//            terrariums.add(new Terrarium(1L, getUser(), "test", getTerrariumSettings(), getSensorsReads(),
+//                    LocalDate.now(), getAlerts()));
+//            terrariums.add(new Terrarium(2L, getUser(), "test", getTerrariumSettings(), getSensorsReads(),
+//                    LocalDate.now(), getAlerts()));
+//        }
+//        return new PageImpl<>(terrariums);
+//    }
 
     public static TerrariumSettings getTerrariumSettings(){
         if(terrariumSettings == null){
@@ -62,16 +62,16 @@ public final class PrepareTest {
         return terrariumSettings;
     }
 
-    public static List<SensorsReads> getSensorsReads(){
-        if(sensorsReads == null){
-            sensorsReads = new ArrayList<>();
-            sensorsReads.add(new SensorsReads(1L, 60.5, 50, 50, 50, 50,
-                    50, LocalDateTime.now()));
-            sensorsReads.add(new SensorsReads(2L, 60.5, 50, 50, 50, 50,
-                    50, LocalDateTime.now()));
-        }
-        return sensorsReads;
-    }
+//    public static List<SensorsReads> getSensorsReads(){
+//        if(sensorsReads == null){
+//            sensorsReads = new ArrayList<>();
+//            sensorsReads.add(new SensorsReads(1L, 60.5, 50, 50, 50, 50,
+//                    50, LocalDateTime.now()));
+//            sensorsReads.add(new SensorsReads(2L, 60.5, 50, 50, 50, 50,
+//                    50, LocalDateTime.now()));
+//        }
+//        return sensorsReads;
+//    }
 
     public static List<Alert> getAlerts(){
         if(alerts == null){

@@ -83,9 +83,8 @@ class UserRepositoryTest {
         SensorsReads sensorsReads = new SensorsReads();
         sensorsReads.setTemperature(44.5);
         sensorsReads.setHumidity(50);
-        sensorsReads.setBrightness(100);
-        sensorsReads.setUvaLevel(400);
-        sensorsReads.setUvbLevel(400);
+        sensorsReads.setUvaLevel(400d);
+        sensorsReads.setUvbLevel(400d);
         sensorsReads.setWaterLevel(80);
         sensorsReads.setReadDate(LocalDateTime.now());
 

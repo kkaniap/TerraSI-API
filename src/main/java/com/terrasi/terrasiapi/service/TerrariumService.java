@@ -5,15 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terrasi.terrasiapi.Utils.JwtUtils;
 import com.terrasi.terrasiapi.exception.TerrariumNotFoundException;
 import com.terrasi.terrasiapi.exception.UnauthorizedException;
-import com.terrasi.terrasiapi.model.JwtModel;
-import com.terrasi.terrasiapi.model.Terrarium;
-import com.terrasi.terrasiapi.model.TerrariumSettings;
-import com.terrasi.terrasiapi.model.User;
+import com.terrasi.terrasiapi.model.*;
 import com.terrasi.terrasiapi.repository.TerrariumRepository;
 import com.terrasi.terrasiapi.repository.TerrariumSettingsRepository;
 import com.terrasi.terrasiapi.repository.UserRepository;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -84,7 +82,7 @@ public class TerrariumService {
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.getByTerrariumSettingsId(terrariumSettings.getId());
         if (terrarium.isPresent()) {
-            rabbitTemplate.convertAndSend(getRabbitQueueName(terrarium.get(), user.get()),
+            rabbitTemplate.convertAndSend(getRabbitQueueSettings(terrarium.get(), user.get()),
                     objectMapper.writeValueAsString(terrarium.get().getTerrariumSettings()));
         }
     }
@@ -96,8 +94,8 @@ public class TerrariumService {
         if (checkAuthForTerrarium(terrarium, user)) {
             terrarium.get().getTerrariumSettings().setIsBulbWorking(!terrarium.get().getTerrariumSettings().getIsBulbWorking());
             terrariumSettingsRepository.save(terrarium.get().getTerrariumSettings());
-            rabbitAdmin.purgeQueue(getRabbitQueueName(terrarium.get(), user.get()));
-            rabbitTemplate.convertAndSend(getRabbitQueueName(terrarium.get(), user.get()),
+            rabbitAdmin.purgeQueue(getRabbitQueueSettings(terrarium.get(), user.get()));
+            rabbitTemplate.convertAndSend(getRabbitQueueSettings(terrarium.get(), user.get()),
                     objectMapper.writeValueAsString(terrarium.get().getTerrariumSettings()));
         }
     }
@@ -109,18 +107,42 @@ public class TerrariumService {
         if (checkAuthForTerrarium(terrarium, user)) {
             terrarium.get().getTerrariumSettings().setIsHumidifierWorking(!terrarium.get().getTerrariumSettings().getIsHumidifierWorking());
             terrariumSettingsRepository.save(terrarium.get().getTerrariumSettings());
-            rabbitAdmin.purgeQueue(getRabbitQueueName(terrarium.get(), user.get()));
-            rabbitTemplate.convertAndSend(getRabbitQueueName(terrarium.get(), user.get()),
+            rabbitAdmin.purgeQueue(getRabbitQueueSettings(terrarium.get(), user.get()));
+            rabbitTemplate.convertAndSend(getRabbitQueueSettings(terrarium.get(), user.get()),
                     objectMapper.writeValueAsString(terrarium.get().getTerrariumSettings()));
         }
     }
 
-    public String getRabbitQueueName(Terrarium terrarium, User user) {
-        return new StringBuilder("Raspberry_")
-                .append(user.getUsername())
+    public String getRabbitQueueSettings(Terrarium terrarium, User user) {
+        return new StringBuilder(user.getUsername())
                 .append('_')
                 .append(terrarium.getName())
+                .append('_')
+                .append("settings")
                 .toString();
+    }
+
+    public String getRabbitQueueSensors(Terrarium terrarium, User user) {
+        return new StringBuilder(user.getUsername())
+                .append('_')
+                .append(terrarium.getName())
+                .append('_')
+                .append("sensors")
+                .toString();
+    }
+
+    public SensorsReads getSensorSReads(Long id, String accessToken){
+        JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
+        Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
+        Optional<Terrarium> terrarium = terrariumRepository.findById(id);
+        SensorsReads sensorsReads = new SensorsReads();
+        if (checkAuthForTerrarium(terrarium, user)){
+            String queueName = getRabbitQueueSensors(terrarium.get(), user.get());
+            sensorsReads = rabbitTemplate.receiveAndConvert(queueName, new ParameterizedTypeReference<>() {
+            });
+        }
+
+        return sensorsReads;
     }
 
     public boolean checkAuthForTerrarium(Optional<Terrarium> terrarium, Optional<User> user) {

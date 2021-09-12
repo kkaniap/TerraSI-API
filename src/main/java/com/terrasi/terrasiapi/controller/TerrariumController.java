@@ -2,6 +2,7 @@ package com.terrasi.terrasiapi.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.terrasi.terrasiapi.exception.*;
+import com.terrasi.terrasiapi.model.SensorsReads;
 import com.terrasi.terrasiapi.model.Terrarium;
 import com.terrasi.terrasiapi.model.TerrariumSettings;
 import com.terrasi.terrasiapi.service.TerrariumService;
@@ -95,6 +96,13 @@ public class TerrariumController {
             return new ResponseEntity<>("Internal server error during parsing to json", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Name updated", HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/sensorsReads")
+    public ResponseEntity<Object> getSensorReads(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
+        SensorsReads sensorsReads = this.terrariumService.getSensorSReads(id, accessToken);
+        System.out.println("kania123 " + sensorsReads);
+        return new ResponseEntity<>(sensorsReads, HttpStatus.OK);
     }
 }
 

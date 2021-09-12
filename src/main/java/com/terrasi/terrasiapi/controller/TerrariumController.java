@@ -1,9 +1,7 @@
 package com.terrasi.terrasiapi.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.terrasi.terrasiapi.exception.ForbiddenException;
-import com.terrasi.terrasiapi.exception.NotFoundException;
-import com.terrasi.terrasiapi.exception.UnauthorizedException;
+import com.terrasi.terrasiapi.exception.*;
 import com.terrasi.terrasiapi.model.Terrarium;
 import com.terrasi.terrasiapi.model.TerrariumSettings;
 import com.terrasi.terrasiapi.service.TerrariumService;
@@ -38,51 +36,49 @@ public class TerrariumController {
 
     @GetMapping
     public ResponseEntity<PagedModel<Terrarium>> getAllTerrariumsByUser(
-            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable page,
-            @RequestHeader("Authorization") String accessToken){
+            @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable page,
+            @RequestHeader("Authorization") String accessToken) {
 
         Page<Terrarium> terrariums = terrariumService.getTerrariumsByToken(accessToken, page);
 
-        if(terrariums != null && terrariums.getTotalElements() > 0){
-            terrariums.forEach(t -> t.add(linkTo(methodOn(TerrariumController.class).getTerrariumById(t.getId(),""))
-                    .withSelfRel()));
+        if (terrariums.getTotalElements() > 0) {
+            terrariums.forEach(t -> t.add(linkTo(methodOn(TerrariumController.class).getTerrariumById(t.getId(), "")).withSelfRel()));
             PagedModel<Terrarium> terrariumModel = pagedResourcesAssembler.toModel(terrariums, t -> t);
             return new ResponseEntity<>(terrariumModel, HttpStatus.OK);
         }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        throw new TerrariumsNotFoundException();
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Object> getTerrariumById(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
+    public ResponseEntity<Object> getTerrariumById(@PathVariable Long id, @RequestHeader("Authorization") String accessToken) {
         Terrarium terrarium;
-        try{
+        try {
             terrarium = terrariumService.getTerrariumById(id, accessToken);
-        }catch (UnauthorizedException e){
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        } catch (NotFoundException e){
-            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
-        }catch (ForbiddenException e){
-            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
+        } catch (UnauthorizedException e) {
+            throw new UnauthorizedException();
+        } catch (NotFoundException e) {
+            throw new TerrariumNotFoundException(id);
+        } catch (ForbiddenException e) {
+            throw new ForbiddenException();
         }
-        terrarium.add(linkTo(methodOn(TerrariumController.class).getTerrariumById(id,"")).withSelfRel());
+        terrarium.add(linkTo(methodOn(TerrariumController.class).getTerrariumById(id, "")).withSelfRel());
         return new ResponseEntity<>(terrarium, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/settings")
     public ResponseEntity<String> saveTerrariumSettings(@PathVariable Long id, @RequestBody TerrariumSettings settings,
-                                                        @RequestHeader("Authorization") String accessToken){
-        try{
-            if(terrariumService.saveTerrariumSettings(id, accessToken, settings)){
+                                                        @RequestHeader("Authorization") String accessToken) {
+        try {
+            if (terrariumService.saveTerrariumSettings(id, accessToken, settings)) {
                 terrariumService.sendTerrariumSettings(settings, accessToken);
             }
-        }catch (UnauthorizedException e){
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }catch (NotFoundException e){
-            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
-        }catch (ForbiddenException e){
-            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
-        }
-        catch (JsonProcessingException e){
+        } catch (UnauthorizedException e) {
+            throw new UnauthorizedException();
+        } catch (NotFoundException e) {
+            throw new TerrariumNotFoundException(id);
+        } catch (ForbiddenException e) {
+            throw new ForbiddenException();
+        } catch (JsonProcessingException e) {
             return new ResponseEntity<>("Internal server error during parsing to json", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Settings updated", HttpStatus.OK);
@@ -90,38 +86,38 @@ public class TerrariumController {
 
     @PatchMapping("/{id}/name")
     public ResponseEntity<String> updateTerrariumName(@PathVariable Long id, @RequestBody String name,
-                                    @RequestHeader("Authorization") String accessToken){
-        try{
+                                                      @RequestHeader("Authorization") String accessToken) {
+        try {
             terrariumService.updateTerrariumName(id, name, accessToken);
-        }catch (UnauthorizedException e){
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }catch (NotFoundException e){
-            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
+        } catch (UnauthorizedException e) {
+            throw new UnauthorizedException();
+        } catch (NotFoundException e) {
+            throw new TerrariumNotFoundException(id);
         }
         return new ResponseEntity<>("Name updated", HttpStatus.OK);
     }
 
     @PostMapping("/{id}/bulbOnOf")
     public ResponseEntity<Object> turnOnOffBulb(@PathVariable Long id, @RequestHeader("Authorization") String accessToken) throws JsonProcessingException {
-        try{
+        try {
             terrariumService.bulbTurnOnOf(id, accessToken);
-        }catch (UnauthorizedException e){
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }catch (NotFoundException e){
-            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
+        } catch (UnauthorizedException e) {
+            throw new UnauthorizedException();
+        } catch (NotFoundException e) {
+            throw new TerrariumNotFoundException(id);
         }
         return new ResponseEntity<>("Name updated", HttpStatus.OK);
     }
 
     @PostMapping("/{id}/humidifierOnOff")
-    public ResponseEntity<Object> turnOnOffHumidifier(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
-        try{
+    public ResponseEntity<Object> turnOnOffHumidifier(@PathVariable Long id, @RequestHeader("Authorization") String accessToken) {
+        try {
             terrariumService.humidifierTurnOnOf(id, accessToken);
-        }catch (UnauthorizedException e){
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }catch (NotFoundException e){
-            return new ResponseEntity<>("Terrarium not found", HttpStatus.NOT_FOUND);
-        }catch (JsonProcessingException e){
+        } catch (UnauthorizedException e) {
+            throw new UnauthorizedException();
+        } catch (NotFoundException e) {
+            throw new TerrariumNotFoundException(id);
+        } catch (JsonProcessingException e) {
             return new ResponseEntity<>("Internal server error during parsing to json", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Name updated", HttpStatus.OK);

@@ -1,6 +1,6 @@
 package com.terrasi.terrasiapi.advices;
 
-import com.terrasi.terrasiapi.exception.NewsNotFoundException;
+import com.terrasi.terrasiapi.exception.JwtExpiredException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class NewsNotFoundAdvice {
+public class JwtExpiredAdvice {
 
     @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NewsNotFoundException.class)
-    public String newsNotFound(NewsNotFoundException ex) {
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(JwtExpiredException.class)
+    public String jwtExpired(JwtExpiredException ex) {
         return ex.getMessage();
     }
 }

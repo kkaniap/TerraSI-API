@@ -1,7 +1,9 @@
 package com.terrasi.terrasiapi.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,22 +36,22 @@ public class SensorsReads {
 
     @NotNull
     @Min(0)
-    private Integer brightness;
+    private Double uvaLevel;
 
     @NotNull
     @Min(0)
-    private Integer uvaLevel;
-
-    @NotNull
-    @Min(0)
-    private Integer uvbLevel;
+    private Double uvbLevel;
 
     @NotNull
     @Min(0)
     private Integer waterLevel;
 
     @NotNull
+    private Boolean isOpen;
+
+    @NotNull
     @PastOrPresent
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime readDate;
 }

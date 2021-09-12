@@ -12,7 +12,7 @@ public class NewsService {
 
     private final String resourcesPath = "src/main/resources/news/n";
 
-    public String readNews(Long id){
+    public String readNews(Long id) throws IOException{
         StringBuilder content = new StringBuilder();
         try(var fileReader = new FileReader(resourcesPath + id + ".txt");
             var reader = new BufferedReader(fileReader)){
@@ -21,9 +21,9 @@ public class NewsService {
                 content.append(nextLine);
             }
         }catch (FileNotFoundException e){
-            content.append("Don't exist");
+            throw new FileNotFoundException();
         }catch(IOException e){
-            e.printStackTrace();
+            throw new IOException();
         }
         return content.toString();
     }

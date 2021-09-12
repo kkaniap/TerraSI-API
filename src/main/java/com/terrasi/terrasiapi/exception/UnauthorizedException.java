@@ -1,7 +1,7 @@
 package com.terrasi.terrasiapi.exception;
 
-public class UnauthorizedException extends Exception{
+public class UnauthorizedException extends RuntimeException{
     public UnauthorizedException(){
-        super("Unauthorized");
+        super("User unauthorized");
     }
 }

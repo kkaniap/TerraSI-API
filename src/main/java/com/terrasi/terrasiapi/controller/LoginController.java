@@ -1,6 +1,9 @@
 package com.terrasi.terrasiapi.controller;
 
 import com.terrasi.terrasiapi.Utils.JwtUtils;
+import com.terrasi.terrasiapi.exception.JwtExpiredException;
+import com.terrasi.terrasiapi.exception.JwtNotValidException;
+import com.terrasi.terrasiapi.exception.UserNotFoundException;
 import com.terrasi.terrasiapi.model.User;
 import com.terrasi.terrasiapi.service.LoginService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -27,29 +30,29 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String,String>> login(@RequestBody User user) throws InterruptedException {
+    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
         Optional<User> loggedUser = loginService.loginUser(user.getUsername(), user.getPassword());
-        if(loggedUser.isPresent()){
+        if (loggedUser.isPresent()) {
             Map<String, String> tokens = new HashMap<>();
             tokens.put("accessToken", loginService.generateAccessToken(loggedUser.get()));
             tokens.put("refreshToken", loginService.generateRefreshToken(loggedUser.get()));
             return new ResponseEntity<>(tokens, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        throw new UserNotFoundException();
     }
 
     @PostMapping("/refreshToken")
-    public ResponseEntity<Object> refreshToken(@RequestBody Map<String, String> mapToken){
+    public ResponseEntity<Object> refreshToken(@RequestBody Map<String, String> mapToken) {
         String username;
-        try{
+        try {
             username = JwtUtils.parseRefreshToken(mapToken.get("refreshToken"));
-        }catch (SignatureException | MalformedJwtException e){
-            return new ResponseEntity<>("Jwt token not valid",HttpStatus.UNAUTHORIZED);
-        }catch (ExpiredJwtException ex){
-            return new ResponseEntity<>("Jwt token is expired",HttpStatus.UNAUTHORIZED);
+        } catch (SignatureException | MalformedJwtException e) {
+            throw new JwtNotValidException();
+        } catch (ExpiredJwtException ex) {
+            throw new JwtExpiredException();
         }
         Optional<String> newToken = loginService.newAccessToken(username);
         return newToken.<ResponseEntity<Object>>map(s -> new ResponseEntity<>(Map.of("accessToken", s), HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED));
+                .orElseThrow(JwtExpiredException::new);
     }
 }

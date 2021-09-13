@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -100,8 +102,12 @@ public class TerrariumController {
 
     @GetMapping("/{id}/sensorsReads")
     public ResponseEntity<Object> getSensorReads(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
-        SensorsReads sensorsReads = this.terrariumService.getSensorSReads(id, accessToken);
-        System.out.println("kania123 " + sensorsReads);
+        SensorsReads sensorsReads;
+        try {
+            sensorsReads = this.terrariumService.getSensorSReads(id, accessToken);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Internal server error during parsing json", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(sensorsReads, HttpStatus.OK);
     }
 }

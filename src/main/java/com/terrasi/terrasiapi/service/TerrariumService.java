@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -131,18 +133,15 @@ public class TerrariumService {
                 .toString();
     }
 
-    public SensorsReads getSensorSReads(Long id, String accessToken){
+    public SensorsReads getSensorSReads(Long id, String accessToken) throws IOException {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
-        SensorsReads sensorsReads = new SensorsReads();
-        if (checkAuthForTerrarium(terrarium, user)){
+        if(checkAuthForTerrarium(terrarium, user)){
             String queueName = getRabbitQueueSensors(terrarium.get(), user.get());
-            sensorsReads = rabbitTemplate.receiveAndConvert(queueName, new ParameterizedTypeReference<>() {
-            });
+            return objectMapper.readValue(Objects.requireNonNull(rabbitTemplate.receive(queueName)).getBody(), SensorsReads.class);
         }
-
-        return sensorsReads;
+        return new SensorsReads();
     }
 
     public boolean checkAuthForTerrarium(Optional<Terrarium> terrarium, Optional<User> user) {

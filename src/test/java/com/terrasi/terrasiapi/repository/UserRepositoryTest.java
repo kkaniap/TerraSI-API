@@ -93,7 +93,7 @@ class UserRepositoryTest {
         terrarium.setName("Spider terrarium");
         terrarium.setTerrariumSettings(terrariumSettings);
         terrarium.setCreateDate(LocalDate.now());
-        terrarium.getSensorsReadsList().add(sensorsReads);
+        //terrarium.getSensorsReadsList().add(sensorsReads);
         terrarium.getAlerts().add(alert);
 
         return terrarium;

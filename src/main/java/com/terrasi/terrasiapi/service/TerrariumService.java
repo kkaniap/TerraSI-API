@@ -141,19 +141,19 @@ public class TerrariumService {
             String queueName = getRabbitQueueSensors(terrarium.get(), user.get());
             SensorsReads sensorsReads = objectMapper.readValue(Objects.requireNonNull(rabbitTemplate.receive(queueName)).getBody(), SensorsReads.class);
             if(sensorsReads != null){
-                saveSensorReads(user.get(), sensorsReads);
+                saveSensorReads(terrarium.get(), sensorsReads);
                 return sensorsReads;
             }
-            else if(user.get().getSensorsReads() != null){
-                return user.get().getSensorsReads();
-            }
+            else if(terrarium.get().getSensorsReads() != null){
+                return terrarium.get().getSensorsReads();
+           }
         }
         return new SensorsReads();
     }
 
-    private void saveSensorReads(User user, SensorsReads sensorsReads){
-        user.setSensorsReads(sensorsReads);
-        userRepository.save(user);
+    private void saveSensorReads(Terrarium terrarium, SensorsReads sensorsReads){
+        terrarium.setSensorsReads(sensorsReads);
+        terrariumRepository.save(terrarium);
     }
 
     public boolean checkAuthForTerrarium(Optional<Terrarium> terrarium, Optional<User> user) {

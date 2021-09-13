@@ -40,9 +40,8 @@ public class Terrarium extends RepresentationModel<Terrarium> {
     @OneToOne(cascade = CascadeType.ALL)
     private TerrariumSettings terrariumSettings;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "TERRARIUM_ID", referencedColumnName = "ID")
-    private List<SensorsReads> sensorsReadsList = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    private SensorsReads sensorsReads;
 
     @NotNull
     @PastOrPresent

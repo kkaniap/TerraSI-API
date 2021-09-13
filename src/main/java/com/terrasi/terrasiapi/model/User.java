@@ -91,7 +91,4 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Terrarium> terrariums = new ArrayList<>();
 
-    @OneToOne
-    private SensorsReads sensorsReads;
-
 }

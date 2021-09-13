@@ -133,15 +133,27 @@ public class TerrariumService {
                 .toString();
     }
 
-    public SensorsReads getSensorSReads(Long id, String accessToken) throws IOException {
+    public SensorsReads getSensorsReads(Long id, String accessToken) throws IOException {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
         if(checkAuthForTerrarium(terrarium, user)){
             String queueName = getRabbitQueueSensors(terrarium.get(), user.get());
-            return objectMapper.readValue(Objects.requireNonNull(rabbitTemplate.receive(queueName)).getBody(), SensorsReads.class);
+            SensorsReads sensorsReads = objectMapper.readValue(Objects.requireNonNull(rabbitTemplate.receive(queueName)).getBody(), SensorsReads.class);
+            if(sensorsReads != null){
+                saveSensorReads(user.get(), sensorsReads);
+                return sensorsReads;
+            }
+            else if(user.get().getSensorsReads() != null){
+                return user.get().getSensorsReads();
+            }
         }
         return new SensorsReads();
+    }
+
+    private void saveSensorReads(User user, SensorsReads sensorsReads){
+        user.setSensorsReads(sensorsReads);
+        userRepository.save(user);
     }
 
     public boolean checkAuthForTerrarium(Optional<Terrarium> terrarium, Optional<User> user) {

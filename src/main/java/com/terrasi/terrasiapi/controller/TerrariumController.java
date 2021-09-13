@@ -104,7 +104,7 @@ public class TerrariumController {
     public ResponseEntity<Object> getSensorReads(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
         SensorsReads sensorsReads;
         try {
-            sensorsReads = this.terrariumService.getSensorSReads(id, accessToken);
+            sensorsReads = this.terrariumService.getSensorsReads(id, accessToken);
         } catch (IOException e) {
             return new ResponseEntity<>("Internal server error during parsing json", HttpStatus.INTERNAL_SERVER_ERROR);
         }

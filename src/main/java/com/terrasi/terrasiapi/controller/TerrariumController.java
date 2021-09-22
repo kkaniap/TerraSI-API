@@ -52,7 +52,13 @@ public class TerrariumController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Object> getTerrariumById(@PathVariable Long id, @RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<Object> getTerrariumById(@PathVariable Long id, @RequestHeader("Authorization") String accessToken){
+        try{
+            terrariumService.getSensorsReads(id, accessToken);
+        } catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
         Terrarium terrarium = terrariumService.getTerrariumById(id, accessToken);
         terrarium.add(linkTo(methodOn(TerrariumController.class).getTerrariumById(id, "")).withSelfRel());
         return new ResponseEntity<>(terrarium, HttpStatus.OK);

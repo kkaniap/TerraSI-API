@@ -3,9 +3,7 @@ package com.terrasi.terrasiapi.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -17,7 +15,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

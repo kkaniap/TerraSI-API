@@ -9,6 +9,8 @@ import com.terrasi.terrasiapi.model.*;
 import com.terrasi.terrasiapi.repository.TerrariumRepository;
 import com.terrasi.terrasiapi.repository.TerrariumSettingsRepository;
 import com.terrasi.terrasiapi.repository.UserRepository;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -137,21 +139,42 @@ public class TerrariumService {
         JwtModel jwtModel = JwtUtils.parseAccessToken(accessToken);
         Optional<User> user = userRepository.findByUsername(jwtModel.getUsername());
         Optional<Terrarium> terrarium = terrariumRepository.findById(id);
+
         if(checkAuthForTerrarium(terrarium, user)){
             String queueName = getRabbitQueueSensors(terrarium.get(), user.get());
-            SensorsReads sensorsReads = objectMapper.readValue(Objects.requireNonNull(rabbitTemplate.receive(queueName)).getBody(), SensorsReads.class);
-            if(sensorsReads != null){
+            Message message = rabbitTemplate.receive(queueName);
+
+            if(message != null)
+            {
+                SensorsReads sensorsReads = objectMapper.readValue(message.getBody(), SensorsReads.class);
+                sensorsReads = sensorsReadsDiff(terrarium.get().getSensorsReads(), sensorsReads);
                 saveSensorReads(terrarium.get(), sensorsReads);
                 return sensorsReads;
             }
-            else if(terrarium.get().getSensorsReads() != null){
+
+            if(terrarium.get().getSensorsReads() != null)
+            {
                 return terrarium.get().getSensorsReads();
-           }
+            }
         }
+
         return new SensorsReads();
     }
 
+    private SensorsReads sensorsReadsDiff(SensorsReads current, SensorsReads newReads){
+        current.setHumidity( newReads.getHumidity() != null ? newReads.getHumidity() : current.getHumidity());
+        current.setReadDate(newReads.getReadDate() != null ? newReads.getReadDate() : current.getReadDate());
+        current.setTemperature(newReads.getTemperature() != null ? newReads.getTemperature() : current.getTemperature());
+        current.setIsOpen(newReads.getIsOpen() != null ? newReads.getIsOpen() : current.getIsOpen());
+        current.setWaterLevel(newReads.getWaterLevel() != null ? newReads.getWaterLevel() : current.getWaterLevel());
+        current.setUvaLevel(newReads.getUvaLevel() != null ? newReads.getUvaLevel() : current.getUvaLevel());
+        current.setUvbLevel(newReads.getUvbLevel() != null ? newReads.getUvbLevel() : current.getUvbLevel());
+
+        return current;
+    }
+
     private void saveSensorReads(Terrarium terrarium, SensorsReads sensorsReads){
+
         terrarium.setSensorsReads(sensorsReads);
         terrariumRepository.save(terrarium);
     }
